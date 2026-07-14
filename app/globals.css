@@ -10,6 +10,21 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Display serif for headings/pull-quotes — a *system* stack, so it adds no
+   * dependency and no network font. Serif titles over the sans body are what
+   * pull the page out of the default "all-emerald sans" look. Generates the
+   * `font-display` utility. */
+  --font-display:
+    "Iowan Old Style", "Palatino Linotype", "Palatino", "Book Antiqua",
+    Georgia, "Times New Roman", serif;
+
+  /* Warm "cork" accent — the amber/tan of cork bark. A second hue against the
+   * forest greens; used for rules, numerals and the fire side. Generates
+   * `text-cork`, `bg-cork`, `border-cork`, etc. */
+  --color-cork: #d99a5b;
+  --color-cork-soft: #e8c39e;
+  --color-cork-deep: #a85f2e;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +37,886 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Smooth anchor jumps for the section nav — but only if motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ── Landing background photo (drop public/landing-forest.jpg) ─────────────
+ * The photo sits behind the landing text at reduced opacity, over a scrim that
+ * keeps the heading legible. If the file is absent, the emerald background just
+ * shows through — nothing breaks. */
+.landing-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/landing-forest.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35; /* ← how strongly the photo shows (0 = hidden, 1 = full) */
+}
+.landing-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 95, 70, 0.35),
+    rgba(6, 78, 59, 0.68)
+  );
+}
+
+/* ── Species gallery card backdrops (see components/SpeciesGallery.tsx) ─────
+ * A faint species photo behind each card. Kept very transparent so the text
+ * stays readable; a slight bottom fade darkens the lower half where the
+ * description and sources sit. Image is set inline per species slug. */
+.species-card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.25; /* ← how strongly each species photo shows */
+  -webkit-mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.55));
+  mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.55));
+}
+
+/* ── Stepped scrolling ─────────────────────────────────────────────────────
+ * `mandatory` makes every major section a firm snap target — a small scroll
+ * clicks to the next chapter. The tall forest scrub scenes also carry a
+ * snap-align at their start; because they are taller than the viewport, the
+ * browser lets you scroll all the way through them (oversized snap areas) so
+ * the parting animation still plays out continuously. */
+html {
+  scroll-snap-type: y mandatory;
+}
+.forest-reveal,
+.forest-restore {
+  scroll-snap-align: start;
+}
+
+/* Canopy photo pinned behind the narrative steps: it stays STATIC in the
+ * viewport (position: sticky) while the section content scrolls over it. The
+ * negative margin removes it from flow so the sections overlay it, and the
+ * isolated parent keeps its negative z-index above the page background. */
+.narrative-region {
+  position: relative;
+  isolation: isolate;
+}
+.narrative-bg {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  margin-bottom: -100vh;
+  z-index: -1;
+  background: url("/canopy.jpg") center / cover no-repeat;
+  opacity: 0.18; /* ← how strongly the canopy shows behind the steps */
+  pointer-events: none;
+}
+
+/* ── Editorial layer ───────────────────────────────────────────────────────
+ * Typographic devices that make the narrative read like a designed feature
+ * rather than a stack of cards: a faint paper grain over the region, an
+ * oversized ghost numeral per section, a drop-cap on each lead paragraph, and
+ * pull-quotes. All pure CSS. */
+
+/* Fine grain across the narrative region — an inline SVG fractal-noise data URI
+ * (no asset, no request). Kept at very low opacity so it only softens the flat
+ * gradient, never textures the text. */
+.narrative-region::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Big faint numeral behind each section's kicker — pulled from the kicker text
+ * ("05 · O fogo") via a data attribute the component sets. Sits under the copy,
+ * in cork, echoing an editorial chapter marker. */
+.section-index {
+  position: relative;
+}
+.section-index::before {
+  content: attr(data-index);
+  position: absolute;
+  top: -0.35em;
+  left: -0.06em;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 18vw, 13rem);
+  font-weight: 600;
+  line-height: 0.8;
+  color: var(--color-cork);
+  opacity: 0.1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Drop-cap on the first letter of a section's lead paragraph — a classic print
+ * device. `initial-letter` sinks it across ~3 lines where supported; the
+ * float+size fallback covers the rest. */
+.lede::first-letter {
+  -webkit-initial-letter: 3;
+  initial-letter: 3;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-cork-soft);
+  margin-right: 0.08em;
+}
+@supports not (initial-letter: 3) {
+  .lede::first-letter {
+    float: left;
+    font-size: 3.2em;
+    line-height: 0.82;
+    padding: 0.02em 0.1em 0 0;
+  }
+}
+
+/* Pull-quote: display serif with a hanging cork mark. Sized to stay below the
+ * section heading — the title must remain the largest type on screen. */
+.pull-quote {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.6vw, 1.85rem);
+  line-height: 1.25;
+  font-style: italic;
+  color: #d1fae5; /* emerald-100 */
+  padding-left: 1.1em;
+  text-wrap: balance;
+}
+.pull-quote::before {
+  content: "\201C"; /* “ */
+  position: absolute;
+  left: -0.06em;
+  top: 0.08em;
+  font-size: 2.4em;
+  line-height: 1;
+  color: var(--color-cork);
+  opacity: 0.7;
+}
+/* Closing mark so the quote reads as balanced — an inline “ has no pair
+ * otherwise. Sits right after the last word rather than hanging like the open. */
+.pull-quote::after {
+  content: "\201D"; /* ” */
+  margin-left: 0.06em;
+  font-family: var(--font-display);
+  color: var(--color-cork);
+  opacity: 0.7;
+}
+
+/* Visible keyboard focus ring across interactive elements. */
+:focus-visible {
+  outline: 2px solid #6ee7b7; /* emerald-300 */
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Forest scenes: reveal (open) + restore (close) ────────────────────────
+ * Pure CSS scroll-driven animation — no JavaScript. See ForestReveal.tsx /
+ * ForestRestore.tsx. Each tall section publishes a NAMED view-timeline; it must
+ * be named (not anonymous `view()`) because the trees live inside
+ * `forest-stage`, which is a scroll container (overflow) — an anonymous timeline
+ * would measure them against that clip and never advance. */
+.forest-reveal,
+.forest-restore {
+  position: relative;
+  height: 300vh; /* ↑ more = slower, gentler animation + longer "closed" beat */
+}
+.forest-reveal {
+  view-timeline-name: --reveal;
+  view-timeline-axis: block;
+}
+.forest-restore {
+  view-timeline-name: --restore;
+  view-timeline-axis: block;
+}
+
+.forest-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Sky behind the (transparent) trees — blue, with a soft cloud glow and gentle
+ * shifts in tone/hue top-to-bottom so it is not a flat blue. */
+.forest-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(30% 22% at 68% 12%, rgba(255, 244, 214, 0.5), transparent 70%),
+    radial-gradient(64% 48% at 50% 28%, rgba(255, 255, 255, 0.35), transparent 60%),
+    radial-gradient(70% 40% at 22% 20%, rgba(186, 230, 253, 0.5), transparent 65%),
+    linear-gradient(
+      to bottom,
+      #6bb8ef 0%,
+      #8ecbf2 26%,
+      #a9dbf0 52%,
+      #cfe9ef 78%,
+      #e6f3ea 100%
+    );
+}
+/* Reveal backdrop: the burning eucalyptus plantation illustration, full-bleed
+ * behind every tree layer. `cover` + bottom anchor keeps the ground line of the
+ * artwork pinned to the stage floor at any aspect ratio. */
+.forest-fire-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/fire-forest.jpg");
+  background-size: cover;
+  background-position: center bottom;
+}
+
+/* Smoke haze over the fire backdrop ONLY: z 2 puts it above the background but
+ * below the farthest tree layer (far3, z 5), so the native forest stays crisp
+ * while the fire behind it starts smothered. Scroll thins it (haze-clear below);
+ * this base opacity is the reduced-motion / unsupported state, matching the
+ * partly-parted static composition. */
+.forest-smoke-haze {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.5;
+  background:
+    radial-gradient(90% 60% at 50% 20%, rgba(132, 108, 92, 0.45), transparent 75%),
+    linear-gradient(to bottom, rgba(122, 102, 88, 0.95), rgba(150, 124, 102, 0.85) 55%, rgba(172, 144, 118, 0.7));
+}
+/* Wind-borne embers (see ForestReveal markup): tiny glowing dots on a
+ * time-based rise-and-drift loop — same pattern as .forest-motes (negative
+ * delays de-sync the loops; hidden is the reduced-motion state). z 1 keeps
+ * them part of the background: behind the smoke haze (z 2), so they emerge
+ * with the fire as the smoke clears. */
+.forest-embers {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+/* Position, size, colour and loop phase are inline per ember (see
+ * ForestReveal's EMBERS array); only the shared shape lives here. */
+.forest-embers span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.4px);
+  opacity: 0;
+}
+/* Rise + wind-drift with a mid-flight sway and flicker. */
+@keyframes ember-fly {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  45% {
+    transform: translate(3vw, -18vh);
+    opacity: 0.85;
+  }
+  70% {
+    transform: translate(1.5vw, -32vh);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(6vw, -50vh);
+    opacity: 0;
+  }
+}
+
+@keyframes haze-clear {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Restore finale: a warmer dawn sky (still sky-toned). */
+.forest-sky-dawn {
+  background:
+    radial-gradient(64% 48% at 50% 30%, rgba(255, 250, 240, 0.4), transparent 62%),
+    linear-gradient(
+      to bottom,
+      #a9d6f2 0%,
+      #cfe0f0 30%,
+      #fbd8b8 60%,
+      #f7cfc4 82%,
+      #eef2e2 100%
+    );
+}
+
+/* Serif italic pill — echoes the pull-quote voice used across the narrative. */
+.forest-caption {
+  position: absolute;
+  bottom: 7vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: 34rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(110, 231, 183, 0.22);
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  letter-spacing: 0.01em;
+  color: #ecfdf5;
+  background: rgba(4, 42, 31, 0.55);
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* Permanent backdrop (see forest-parts.tsx `BACKDROP`). Sits just above the sky
+ * (z 0) and behind the farthest sliding layer (far3, z 5). It carries no
+ * `reveal-*`/`restore-*` class, so none of the parting keyframes below touch it —
+ * it stays put and keeps the centre wooded. Pale, washed-out and slightly
+ * blurred: a distant treeline lost in haze, not a dark wall — and the warm fire
+ * pops harder against it. */
+.forest-backdrop {
+  z-index: 3;
+  filter: brightness(0.85) saturate(0.4) blur(0.8px);
+  opacity: 0.78;
+}
+
+/* Reveal stay-layer (see forest-parts.tsx `REVEAL_STAY_LEFT/RIGHT`). The
+ * `reveal-left-/right-` prefix opts both halves into the shared parting
+ * animation below — but with the LAST stagger slot and a tiny --slide, so
+ * after every other row has gone they drift apart just enough to open a
+ * ~20vw centre gap, then stop. Sits above the smoke haze (z 2), below every
+ * other depth (z 5+); darkened so the rows in front read as nearer. */
+.reveal-left-stay,
+.reveal-right-stay {
+  z-index: 3;
+  filter: brightness(0.72) saturate(0.5);
+  opacity: 0.98;
+  --stagger: 20%;
+}
+.reveal-left-stay {
+  --slide: -14%;
+}
+.reveal-right-stay {
+  --slide: 14%;
+}
+
+/* Parallax depth layers. `--slide` = how far a depth travels: near travels most
+ * (fastest) → foreground parallax. Distance reads as AERIAL PERSPECTIVE, not
+ * darkness: far layers are desaturated and partly transparent so the light sky
+ * bleeds through and cools them, the way real haze does. `--stagger` shifts each
+ * depth's animation-range (NEAR parts first, then each deeper layer follows —
+ * a domino from the front row to the back); `--zoom` gives the front layers a
+ * slight swell as they exit. */
+.reveal-left-far3,
+.reveal-right-far3,
+.restore-left-far3,
+.restore-right-far3 {
+  z-index: 5;
+  filter: brightness(0.92) saturate(0.5);
+  opacity: 0.88;
+  --stagger: 16%;
+}
+.reveal-left-far2,
+.reveal-right-far2,
+.restore-left-far2,
+.restore-right-far2 {
+  z-index: 9;
+  filter: brightness(0.94) saturate(0.65);
+  opacity: 0.93;
+  --stagger: 12%;
+}
+.reveal-left-far,
+.reveal-right-far,
+.restore-left-far,
+.restore-right-far {
+  z-index: 14;
+  filter: saturate(0.82);
+  opacity: 0.97;
+  --stagger: 8%;
+}
+.reveal-left-mid,
+.reveal-right-mid,
+.restore-left-mid,
+.restore-right-mid {
+  z-index: 30;
+  filter: brightness(0.97);
+  --stagger: 4%;
+  --zoom: 1.03;
+}
+.reveal-left-near,
+.reveal-right-near,
+.restore-left-near,
+.restore-right-near {
+  z-index: 40;
+  --stagger: 0%;
+  --zoom: 1.06;
+}
+
+/* Travel distance per depth (left negative, right positive). */
+.reveal-left-far3,
+.restore-left-far3 {
+  --slide: -32%;
+}
+.reveal-left-far2,
+.restore-left-far2 {
+  --slide: -50%;
+}
+.reveal-left-far,
+.restore-left-far {
+  --slide: -72%;
+}
+.reveal-left-mid,
+.restore-left-mid {
+  --slide: -98%;
+}
+.reveal-left-near,
+.restore-left-near {
+  --slide: -130%;
+}
+.reveal-right-far3,
+.restore-right-far3 {
+  --slide: 32%;
+}
+.reveal-right-far2,
+.restore-right-far2 {
+  --slide: 50%;
+}
+.reveal-right-far,
+.restore-right-far {
+  --slide: 72%;
+}
+.reveal-right-mid,
+.restore-right-mid {
+  --slide: 98%;
+}
+.reveal-right-near,
+.restore-right-near {
+  --slide: 130%;
+}
+
+/* Base states (reduced motion / unsupported): reveal → partly parted (so the
+ * eucalyptus shows); restore → closed (the restored forest is shown).
+ * transform-origin at the ground line so the `--zoom` scale grows trees from
+ * their roots, not their midpoints. */
+[class*="reveal-left-"],
+[class*="reveal-right-"] {
+  transform: translateX(calc(var(--slide) * 0.6));
+  transform-origin: 50% 100%;
+}
+[class*="restore-left-"],
+[class*="restore-right-"] {
+  transform: translateX(0);
+  transform-origin: 50% 100%;
+}
+
+/* One keyframe each, parameterised by --slide/--zoom (resolved per layer).
+ * `scale` is the INDEPENDENT transform property — it composes with the `transform:
+ * translateX(...)` on the same element instead of overwriting it, which is what
+ * lets the front layers swell as they slide without wrapper elements. */
+@keyframes forest-part {
+  from {
+    transform: translateX(0);
+    scale: 1;
+  }
+  to {
+    transform: translateX(var(--slide));
+    scale: var(--zoom, 1);
+  }
+}
+@keyframes forest-close {
+  from {
+    transform: translateX(var(--slide));
+    scale: var(--zoom, 1);
+  }
+  to {
+    transform: translateX(0);
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Order matters: the `animation` shorthand resets `animation-timeline` and
+     * `animation-range`, so both MUST come after it. `cover` spans section
+     * height + viewport (300vh + 100vh here), and the stage only pins at 25%
+     * — so the range starts at 28%: a beat after pinning, the front row moves
+     * almost immediately. Parallax comes from the different `--slide` distances;
+     * `--stagger` (near 0% → far3 16% → stay 20%) delays each deeper layer's
+     * range so the FRONT row slides first and the rest follow — a domino
+     * toward the back, ending on the stay band's small centre-gap drift —
+     * and ease-out gives each layer a quick launch that settles softly. */
+    [class*="reveal-left-"],
+    [class*="reveal-right-"] {
+      animation: forest-part ease-out both;
+      animation-timeline: --reveal;
+      animation-range: cover calc(28% + var(--stagger, 0%)) cover
+        calc(54% + var(--stagger, 0%));
+      will-change: transform;
+    }
+    [class*="restore-left-"],
+    [class*="restore-right-"] {
+      animation: forest-close ease-out both;
+      animation-timeline: --restore;
+      animation-range: cover calc(34% + var(--stagger, 0%)) cover
+        calc(60% + var(--stagger, 0%));
+      will-change: transform;
+    }
+    /* The smoke haze thins across the WHOLE domino (first layer's start →
+     * stay layer's end). Ease-in on a scroll timeline = the value changes
+     * slowly at the range start and fast at the end: the smoke lingers, then
+     * whips away as the last rows settle. */
+    .forest-smoke-haze {
+      animation: haze-clear ease-in both;
+      animation-timeline: --reveal;
+      animation-range: cover 28% cover 74%;
+    }
+  }
+}
+
+/* ── Forest atmosphere (see forest-parts.tsx `ForestAtmosphere`) ────────────
+ * Static markup rendered by BOTH scenes; everything here is decorative,
+ * pointer-transparent and layered into the existing z-order:
+ * sky/fire-bg 0 → embers 1 → smoke-haze 2 → backdrop/stay 3 → far3 5 → mist-far 7 → far2 9 →
+ * far 14 → mist-close 22 → mid 30 → motes 35 → near 40 → ground 42 →
+ * shafts 46 → vignette 48 → grain 49 → caption 50. */
+
+/* Ground plane: a soft forest-floor gradient so trunks don't end on a hard
+ * viewport edge. Static — no animation needed. */
+.forest-ground {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 14vh;
+  z-index: 42;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(16, 38, 26, 0.55),
+    rgba(16, 38, 26, 0.2) 55%,
+    transparent
+  );
+}
+
+/* Mist bands: aerial haze slotted BETWEEN depth layers. The far band sits
+ * behind far2; the close band sits just in front of the eucalyptus, so the fire
+ * first appears through mist. Base opacity is the reduced-motion/unsupported
+ * state (a fixed haze); when the scroll timeline runs, the mist thins as the
+ * forest parts — and `animation-direction: reverse` reuses the SAME keyframe to
+ * thicken it back as the restore scene closes. */
+.forest-mist {
+  position: absolute;
+  inset: auto 0 0 0;
+  pointer-events: none;
+  opacity: 0.7;
+}
+.forest-mist-far {
+  height: 38vh;
+  z-index: 7;
+  background: linear-gradient(to top, rgba(224, 238, 232, 0.45), transparent 65%);
+}
+.forest-mist-close {
+  height: 26vh;
+  z-index: 22;
+  background: linear-gradient(to top, rgba(214, 232, 220, 0.35), transparent 65%);
+}
+/* Over the fire backdrop the reveal's mist reads as smoke, not sea-mist: same
+ * bands, warm grey-brown instead of green-white. */
+.forest-reveal .forest-mist-far {
+  background: linear-gradient(to top, rgba(92, 72, 60, 0.5), transparent 65%);
+}
+.forest-reveal .forest-mist-close {
+  background: linear-gradient(to top, rgba(78, 62, 52, 0.4), transparent 65%);
+}
+@keyframes mist-thin {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.3;
+  }
+}
+
+/* Light shafts: soft diagonal god-rays from the upper sky glow, faded out with
+ * a gradient mask before they reach the forest floor. Still (a fixed shaft of
+ * light is naturalistic); warmer under the restore scene's dawn sky. */
+.forest-lightshafts {
+  position: absolute;
+  inset: 0;
+  z-index: 46;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    112deg,
+    transparent 0 7%,
+    rgba(255, 252, 235, 0.1) 9% 11%,
+    transparent 13% 22%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.4) 55%,
+    transparent 85%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    rgba(0, 0, 0, 0.4) 55%,
+    transparent 85%
+  );
+}
+.forest-restore .forest-lightshafts {
+  background: repeating-linear-gradient(
+    112deg,
+    transparent 0 7%,
+    rgba(255, 224, 178, 0.14) 9% 11%,
+    transparent 13% 22%
+  );
+}
+
+/* Drifting motes (pollen / ash-glow): six tiny blurred dots on a slow time-based
+ * rise-and-sway loop, staggered with negative delays (same pattern as
+ * smoke-rise). Hidden by default — invisible is the correct reduced-motion
+ * state for pure decoration; they only appear inside the motion guard below. */
+.forest-motes {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+}
+.forest-motes span {
+  position: absolute;
+  width: 0.6vh;
+  height: 0.6vh;
+  border-radius: 50%;
+  background: rgba(255, 248, 225, 0.7);
+  filter: blur(1px);
+  opacity: 0;
+}
+.forest-motes span:nth-child(1) { left: 16%; bottom: 12%; }
+.forest-motes span:nth-child(2) { left: 31%; bottom: 30%; width: 0.5vh; height: 0.5vh; }
+.forest-motes span:nth-child(3) { left: 44%; bottom: 18%; width: 0.8vh; height: 0.8vh; }
+.forest-motes span:nth-child(4) { left: 58%; bottom: 34%; }
+.forest-motes span:nth-child(5) { left: 72%; bottom: 14%; width: 0.5vh; height: 0.5vh; }
+.forest-motes span:nth-child(6) { left: 86%; bottom: 26%; width: 0.7vh; height: 0.7vh; }
+@keyframes mote-drift {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  70% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(2.5vw, -30vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .forest-motes span {
+    animation: mote-drift 9s linear infinite;
+  }
+  .forest-motes span:nth-child(2) { animation-delay: -2s; animation-duration: 11s; }
+  .forest-motes span:nth-child(3) { animation-delay: -5s; }
+  .forest-motes span:nth-child(4) { animation-delay: -7s; animation-duration: 10s; }
+  .forest-motes span:nth-child(5) { animation-delay: -3s; animation-duration: 12s; }
+  .forest-motes span:nth-child(6) { animation-delay: -8s; }
+
+  /* Name + default timing only: each ember's inline animation-delay/-duration
+   * (higher precedence) de-syncs the shared loop. */
+  .forest-embers span {
+    animation: ember-fly 7s linear infinite;
+  }
+
+  @supports (animation-timeline: view()) {
+    .forest-reveal .forest-mist {
+      animation: mist-thin ease both;
+      animation-timeline: --reveal;
+      animation-range: cover 28% cover 74%;
+    }
+    .forest-restore .forest-mist {
+      animation: mist-thin ease both;
+      animation-direction: reverse;
+      animation-timeline: --restore;
+      animation-range: cover 34% cover 74%;
+    }
+  }
+}
+
+/* Vignette + film grain over the whole stage: the vignette focuses the centre
+ * reveal; the grain is the SAME fractal-noise data URI as .narrative-region so
+ * the scenes share the page's editorial texture. */
+.forest-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 48;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 45%,
+    transparent 55%,
+    rgba(10, 20, 14, 0.3) 100%
+  );
+}
+.forest-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 49;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Burning eucalyptus (see components/BurningEucalyptus.tsx) ──────────────
+ * Continuous flame/smoke/glow, layered independently of the scroll parting.
+ * All motion is opt-in via prefers-reduced-motion. */
+.euc-holder {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 20;
+  height: 80vh;
+  width: 44vh;
+}
+.euc-tree {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+}
+.euc-glow {
+  position: absolute;
+  bottom: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34vh;
+  height: 34vh;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.55), rgba(249, 115, 22, 0) 70%);
+  filter: blur(6px);
+  z-index: -1;
+}
+.euc-glow-dim {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0) 70%);
+}
+.euc-flames {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 36vh;
+  width: auto;
+  filter: blur(0.6px);
+}
+.flame {
+  transform-origin: 50% 100%;
+}
+.euc-smoke {
+  position: absolute;
+  bottom: 34vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12vh;
+  height: 30vh;
+}
+.euc-smoke span {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 6vh;
+  height: 6vh;
+  border-radius: 50%;
+  background: rgba(140, 140, 140, 0.4);
+  filter: blur(5px);
+  transform: translate(-50%, 0) scale(0.5);
+  opacity: 0;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+  50% {
+    transform: scaleY(1.12) scaleX(0.93);
+  }
+}
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes smoke-rise {
+  0% {
+    transform: translate(-50%, 0) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -26vh) scale(1.7);
+    opacity: 0;
+  }
+}
+@keyframes ember-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flame-a {
+    animation: flicker 900ms ease-in-out infinite;
+  }
+  .flame-b {
+    animation: flicker 720ms ease-in-out -200ms infinite;
+  }
+  .flame-c {
+    animation: flicker 1040ms ease-in-out -450ms infinite;
+  }
+  .euc-glow {
+    animation: glow-pulse 1600ms ease-in-out infinite;
+  }
+  .euc-smoke span {
+    animation: smoke-rise 3.4s linear infinite;
+  }
+  .euc-smoke span:nth-child(2) {
+    left: 38%;
+    animation-delay: -1.1s;
+  }
+  .euc-smoke span:nth-child(3) {
+    left: 62%;
+    animation-delay: -2.2s;
+  }
+  .euc-ember {
+    animation: ember-pulse 1.8s ease-in-out infinite;
+  }
 }

@@ -1,0 +1,147 @@
+/**
+ * Stylised inline tree illustrations, one silhouette per species.
+ *
+ * Concept demonstrated: a component driven by a discriminated "shape", not a
+ * pile of booleans. Each species maps to one `TreeShape`; a small render map
+ * turns that shape into SVG. Every silhouette keeps the same addressable parts —
+ * `#{slug}-crown` and `#{slug}-trunk` — so the Phase 4 scroll animation targets
+ * them uniformly regardless of which tree is drawn.
+ *
+ * Everything is inline SVG using `currentColor`, so the parent picks the crown
+ * colour with a Tailwind `text-*` class and dark/light theming comes for free.
+ * No image files, no animation library — per the project's dependency rule.
+ */
+import type { SpeciesSlug } from "@/lib/species";
+
+type TreeShape = "cork-oak" | "holm-oak" | "oak" | "shrub" | "riparian" | "eucalyptus";
+
+// Which drawing each species uses. Presentation lives here, not in the dataset,
+// so lib/species.ts stays pure content.
+const SHAPE_BY_SLUG: Record<SpeciesSlug, TreeShape> = {
+  sobreiro: "cork-oak",
+  azinheira: "holm-oak",
+  carvalhos: "oak",
+  medronheiro: "shrub",
+  "galeria-ripicola": "riparian",
+  eucalipto: "eucalyptus",
+};
+
+type TreeSvgProps = {
+  slug: SpeciesSlug;
+  className?: string;
+};
+
+export function TreeSvg({ slug, className }: TreeSvgProps) {
+  const shape = SHAPE_BY_SLUG[slug];
+  const crownId = `${slug}-crown`;
+  const trunkId = `${slug}-trunk`;
+
+  return (
+    <svg
+      viewBox="0 0 80 120"
+      role="img"
+      aria-label={`Ilustração de ${slug}`}
+      className={className}
+      fill="currentColor"
+    >
+      {SHAPES[shape](crownId, trunkId)}
+    </svg>
+  );
+}
+
+// Amber trunk shared by most trees; the cork oak overrides its lower trunk.
+const trunk = (id: string, x = 36, y = 66, w = 8, h = 50) => (
+  <g id={id} className="text-amber-950/80">
+    <rect x={x} y={y} width={w} height={h} fill="currentColor" />
+  </g>
+);
+
+const SHAPES: Record<TreeShape, (crownId: string, trunkId: string) => React.ReactNode> = {
+  // Cork oak: broad rounded crown; lower trunk stripped to reddish cork.
+  "cork-oak": (crownId, trunkId) => (
+    <>
+      {trunk(trunkId, 35, 60, 10, 56)}
+      <g id={`${trunkId}-cork`} className="text-orange-800/80" aria-hidden>
+        <rect x={35} y={88} width={10} height={28} fill="currentColor" />
+      </g>
+      <g id={crownId}>
+        <circle cx="40" cy="42" r="30" />
+        <circle cx="22" cy="52" r="16" />
+        <circle cx="58" cy="52" r="16" />
+      </g>
+    </>
+  ),
+
+  // Holm oak: smaller, denser, darker-reading rounded crown.
+  "holm-oak": (crownId, trunkId) => (
+    <>
+      {trunk(trunkId, 37, 62, 7, 54)}
+      <g id={crownId}>
+        <circle cx="40" cy="46" r="26" />
+        <circle cx="26" cy="54" r="13" />
+        <circle cx="54" cy="54" r="13" />
+      </g>
+    </>
+  ),
+
+  // Deciduous oak: wide, slightly lobed canopy.
+  oak: (crownId, trunkId) => (
+    <>
+      {trunk(trunkId, 36, 58, 9, 58)}
+      <g id={crownId}>
+        <circle cx="40" cy="40" r="28" />
+        <circle cx="18" cy="46" r="15" />
+        <circle cx="62" cy="46" r="15" />
+        <circle cx="40" cy="58" r="20" />
+      </g>
+    </>
+  ),
+
+  // Strawberry tree: low multi-stem shrub with red berries.
+  shrub: (crownId, trunkId) => (
+    <>
+      <g id={trunkId} className="text-amber-950/80">
+        <rect x={32} y={72} width={6} height={44} fill="currentColor" />
+        <rect x={42} y={78} width={6} height={38} fill="currentColor" />
+      </g>
+      <g id={crownId}>
+        <circle cx="30" cy="66" r="18" />
+        <circle cx="52" cy="70" r="16" />
+        <circle cx="42" cy="54" r="16" />
+      </g>
+      <g aria-hidden className="text-red-500">
+        <circle cx="28" cy="70" r="2.4" fill="currentColor" />
+        <circle cx="48" cy="66" r="2.4" fill="currentColor" />
+        <circle cx="40" cy="76" r="2.4" fill="currentColor" />
+      </g>
+    </>
+  ),
+
+  // Riparian gallery: slender, willowy cluster along water.
+  riparian: (crownId, trunkId) => (
+    <>
+      <g id={trunkId} className="text-amber-950/80">
+        <rect x={30} y={54} width={5} height={62} fill="currentColor" />
+        <rect x={45} y={48} width={5} height={68} fill="currentColor" />
+      </g>
+      <g id={crownId}>
+        <ellipse cx="32" cy="44" rx="12" ry="30" />
+        <ellipse cx="48" cy="38" rx="12" ry="34" />
+      </g>
+    </>
+  ),
+
+  // Eucalyptus: tall, narrow, sparse crown on a long pale trunk.
+  eucalyptus: (crownId, trunkId) => (
+    <>
+      <g id={trunkId} className="text-stone-300/80">
+        <rect x={37} y={30} width={6} height={86} fill="currentColor" />
+      </g>
+      <g id={crownId}>
+        <ellipse cx="40" cy="30" rx="12" ry="26" />
+        <ellipse cx="30" cy="40" rx="6" ry="16" />
+        <ellipse cx="50" cy="40" rx="6" ry="16" />
+      </g>
+    </>
+  ),
+};
