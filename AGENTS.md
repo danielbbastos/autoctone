@@ -24,8 +24,9 @@ prep). Code he cannot explain is worse than no code.
   Tailwind 4 — nothing else.
 - **Comment density: moderate.** One comment block per component/function explaining
   what it does and which concept it demonstrates. Never line-by-line commentary.
-- **Keep the README concept map in sync.** If you add/move a concept, update the
-  table in README.md — it is Daniel's study index.
+- **Keep the NOTES.md concept map in sync.** If you add/move a concept, update the
+  table in NOTES.md (gitignored) — it is Daniel's study index. README.md is the
+  public face: short and non-personal; don't add study material there.
 - **Server-first.** Default to Server Components; add "use client" only when hooks,
   handlers, or browser APIs require it, and push the boundary as low as possible.
 - **Respect `prefers-reduced-motion`** in every animation from day one.
