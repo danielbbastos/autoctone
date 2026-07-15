@@ -92,8 +92,16 @@ body {
  * snap-align at their start; because they are taller than the viewport, the
  * browser lets you scroll all the way through them (oversized snap areas) so
  * the parting animation still plays out continuously. */
+/* On phones the snap relaxes to `proximity`: mobile URL-bar show/hide resizes
+ * the viewport mid-scroll, and mandatory snap + resize fights the user's thumb;
+ * proximity still settles on section starts without ever wrestling control. */
 html {
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
+}
+@media (min-width: 768px) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
 }
 .forest-reveal,
 .forest-restore {
@@ -111,8 +119,12 @@ html {
 .narrative-bg {
   position: sticky;
   top: 0;
+  /* dvh tracks the live mobile viewport as the URL bar hides; vh is the
+   * fallback for browsers without dynamic viewport units. */
   height: 100vh;
+  height: 100dvh;
   margin-bottom: -100vh;
+  margin-bottom: -100dvh;
   z-index: -1;
   background: url("/canopy.jpg") center / cover no-repeat;
   opacity: 0.18; /* ← how strongly the canopy shows behind the steps */
@@ -240,10 +252,17 @@ html {
   view-timeline-axis: block;
 }
 
+/* `--fu` (forest unit) is a width-clamped viewport unit: on wide screens
+ * `1vh` wins and the scenes render exactly as designed; on a tall narrow phone
+ * `1.5vw` wins, so every tree/flame sized in `--fu` shrinks with the screen's
+ * WIDTH — the composition zooms out instead of cropping to a few giant trunks.
+ * One custom property, no media query, no duplicated tree data. */
 .forest-stage {
+  --fu: min(1vh, 1.5vw);
   position: sticky;
   top: 0;
   height: 100vh;
+  height: 100dvh; /* live mobile viewport (URL-bar aware); vh above is the fallback */
   width: 100%;
   overflow: hidden;
 }
@@ -366,7 +385,8 @@ html {
   left: 50%;
   transform: translateX(-50%);
   z-index: 50;
-  max-width: 34rem;
+  /* min() clamp: full editorial width on desktop, 1rem side margins on phones. */
+  max-width: min(34rem, calc(100vw - 2rem));
   padding: 0.6rem 1.4rem;
   border-radius: 999px;
   border: 1px solid rgba(110, 231, 183, 0.22);
@@ -785,15 +805,16 @@ html {
 
 /* ── Burning eucalyptus (see components/BurningEucalyptus.tsx) ──────────────
  * Continuous flame/smoke/glow, layered independently of the scroll parting.
- * All motion is opt-in via prefers-reduced-motion. */
+ * All motion is opt-in via prefers-reduced-motion. Sized in `--fu` (see
+ * .forest-stage) so the whole assembly scales down on narrow screens. */
 .euc-holder {
   position: absolute;
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
   z-index: 20;
-  height: 80vh;
-  width: 44vh;
+  height: calc(80 * var(--fu, 1vh));
+  width: calc(44 * var(--fu, 1vh));
 }
 .euc-tree {
   position: absolute;
@@ -805,11 +826,11 @@ html {
 }
 .euc-glow {
   position: absolute;
-  bottom: 2vh;
+  bottom: calc(2 * var(--fu, 1vh));
   left: 50%;
   transform: translateX(-50%);
-  width: 34vh;
-  height: 34vh;
+  width: calc(34 * var(--fu, 1vh));
+  height: calc(34 * var(--fu, 1vh));
   border-radius: 50%;
   background: radial-gradient(circle, rgba(249, 115, 22, 0.55), rgba(249, 115, 22, 0) 70%);
   filter: blur(6px);
@@ -823,7 +844,7 @@ html {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  height: 36vh;
+  height: calc(36 * var(--fu, 1vh));
   width: auto;
   filter: blur(0.6px);
 }
@@ -832,18 +853,18 @@ html {
 }
 .euc-smoke {
   position: absolute;
-  bottom: 34vh;
+  bottom: calc(34 * var(--fu, 1vh));
   left: 50%;
   transform: translateX(-50%);
-  width: 12vh;
-  height: 30vh;
+  width: calc(12 * var(--fu, 1vh));
+  height: calc(30 * var(--fu, 1vh));
 }
 .euc-smoke span {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 6vh;
-  height: 6vh;
+  width: calc(6 * var(--fu, 1vh));
+  height: calc(6 * var(--fu, 1vh));
   border-radius: 50%;
   background: rgba(140, 140, 140, 0.4);
   filter: blur(5px);
@@ -878,7 +899,7 @@ html {
     opacity: 0.4;
   }
   100% {
-    transform: translate(-50%, -26vh) scale(1.7);
+    transform: translate(-50%, calc(-26 * var(--fu, 1vh))) scale(1.7);
     opacity: 0;
   }
 }

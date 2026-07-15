@@ -80,15 +80,19 @@ const TREE_IMAGES = [
   "/trees/mato.webp", // 6 — understory shrubs (pilriteiro + giesta), pre-darkened
 ];
 
-/** img = index into TREE_IMAGES; left = % across; height = vh; flip = mirror. */
+/** img = index into TREE_IMAGES; left = % across; height = --fu units (≈vh); flip = mirror. */
 export type ImgTree = { img: number; left: number; height: number; flip?: boolean };
 
 /**
  * One depth layer of tree images. The layer div is what the CSS slides.
- * `sink` (vh) pushes every image below the section bottom: the artwork's
+ * `sink` pushes every image below the section bottom: the artwork's
  * elliptical ground mound puts the trunk base a little above the image's
  * bottom edge, so far layers read as floating unless they overhang — the
  * scrollport's overflow clipping hides the sunken part.
+ *
+ * Heights are multiples of `--fu` (defined on .forest-stage in globals.css):
+ * `min(1vh, 1.5vw)`, i.e. 1vh on wide screens but width-clamped on phones so
+ * the trees shrink with the viewport instead of overcrowding it.
  */
 export function ImgTreeLayer({
   trees,
@@ -110,9 +114,9 @@ export function ImgTreeLayer({
           draggable={false}
           style={{
             position: "absolute",
-            bottom: `${-sink}vh`,
+            bottom: `calc(${-sink} * var(--fu, 1vh))`,
             left: `${t.left}%`,
-            height: `${t.height}vh`,
+            height: `calc(${t.height} * var(--fu, 1vh))`,
             transform: `translateX(-50%) scaleX(${t.flip ? -1 : 1})`,
           }}
         />
