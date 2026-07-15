@@ -66,6 +66,9 @@ export async function generateMetadata({
 
 export const viewport: Viewport = {
   themeColor: "#022c22", // emerald-950, matches the page background
+  // Let the full-bleed 100dvh forest scenes extend into the notch / home-bar
+  // areas on phones instead of being letterboxed by the safe area.
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
