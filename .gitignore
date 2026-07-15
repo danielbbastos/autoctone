@@ -46,3 +46,8 @@ next-env.d.ts
 
 # private study notes
 NOTES.md
+
+# Claude / AI-assistant files — never commit anything Claude-related
+.claude/
+CLAUDE.md
+AGENTS.md
