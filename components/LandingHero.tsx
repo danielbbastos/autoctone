@@ -6,7 +6,7 @@
  * designed out later.)
  */
 import type { Section } from "@/lib/narrative";
-import { getDictionary, localize, type Locale } from "@/lib/i18n";
+import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 
 export function LandingHero({
@@ -30,11 +30,11 @@ export function LandingHero({
       <div className="landing-scrim" />
       <p className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-cork-soft drop-shadow">
         <span aria-hidden className="h-px w-8 bg-cork/70" />
-        {section.kicker}
+        {pick(locale, section.kicker, section.kickerEn)}
         <span aria-hidden className="h-px w-8 bg-cork/70" />
       </p>
       <h1 className="mt-5 max-w-3xl font-display text-5xl font-semibold leading-[1.05] tracking-tight text-white drop-shadow-lg sm:text-7xl">
-        {section.titlePt}
+        {pick(locale, section.titlePt, section.titleEn)}
       </h1>
       {claim ? (
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-emerald-50/95 drop-shadow">

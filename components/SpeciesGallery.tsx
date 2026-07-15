@@ -8,7 +8,7 @@
  * The fire-behaviour label is localized via the UI dictionary.
  */
 import { NATIVE_SPECIES } from "@/lib/species";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { getDictionary, pick, type Locale } from "@/lib/i18n";
 import type { FireBehaviour } from "@/lib/types";
 import { SourceMarks } from "./SourceMarks";
 import { TreeSvg } from "./TreeSvg";
@@ -58,13 +58,15 @@ export function SpeciesGallery({ locale }: { locale: Locale }) {
             </span>
           </div>
           <h3 className="mt-3 font-display text-2xl font-semibold text-emerald-50">
-            {species.namePt}
+            {pick(locale, species.namePt, species.nameEn)}
           </h3>
           <p className="text-sm italic text-emerald-300/90">{species.scientific}</p>
           <p className="mt-3 border-l-2 border-cork/50 pl-3 text-sm font-medium text-cork-soft">
-            {species.taglinePt}
+            {pick(locale, species.taglinePt, species.taglineEn)}
           </p>
-          <p className="mt-3 text-sm leading-relaxed text-emerald-100/80">{species.bodyPt}</p>
+          <p className="mt-3 text-sm leading-relaxed text-emerald-100/80">
+            {pick(locale, species.bodyPt, species.bodyEn)}
+          </p>
           <div className="mt-auto pt-4">
             <SourceMarks sources={species.sources} />
           </div>

@@ -14,7 +14,7 @@
 import type { ReactNode } from "react";
 import type { Section } from "@/lib/narrative";
 import type { SourceRef } from "@/lib/types";
-import { getDictionary, localize, type Locale } from "@/lib/i18n";
+import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 import { CrossLink } from "./CrossLink";
 
@@ -40,8 +40,9 @@ export function NarrativeSection({
   const dict = getDictionary(locale);
   const Heading = heading; // capitalized → React treats it as a component/tag
 
+  const kicker = pick(locale, section.kicker, section.kickerEn);
   // The kicker is "06 · O fogo"; the leading number feeds the ghost numeral.
-  const index = section.kicker.split("·")[0]?.trim();
+  const index = kicker.split("·")[0]?.trim();
   const sources = collectSources(section);
 
   return (
@@ -52,10 +53,10 @@ export function NarrativeSection({
       <div className="section-index relative z-10 mx-auto w-full max-w-4xl" data-index={index}>
         <p className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.25em] text-cork">
           <span aria-hidden className="h-px w-8 bg-cork/60" />
-          {section.kicker}
+          {kicker}
         </p>
         <Heading className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-emerald-50 sm:text-6xl">
-          {section.titlePt}
+          {pick(locale, section.titlePt, section.titleEn)}
         </Heading>
 
         {section.body.map((claim, i) => (
