@@ -43,8 +43,10 @@ export type Species = {
   fireBehaviour: FireBehaviour;
   /** One-line hook shown in the gallery card. */
   taglinePt: string;
+  taglineEn?: string;
   /** Fuller description, 2–4 sentences, PT-first. */
   bodyPt: string;
+  bodyEn?: string;
   sources: SourceRef[];
 };
 
@@ -74,6 +76,7 @@ export type Organization = {
 /** A compact labelled figure about an organization (e.g. "Capitalização · ~2,5 mM€"). */
 export type OrgFact = {
   labelPt: string;
+  labelEn?: string;
   value: string;
   sources: SourceRef[];
 };
@@ -85,8 +88,10 @@ export type Stat = {
   value: string;
   /** Unit or short qualifier, e.g. "hectares" or "mortos". */
   unitPt: string;
+  unitEn?: string;
   /** What the number means, PT-first. */
   labelPt: string;
+  labelEn?: string;
   sources: SourceRef[];
   /**
    * Optional "how big is that?" reference points (e.g. "84× a cidade de

@@ -9,7 +9,7 @@
  * claim text is localized through `localize`, falling back to PT.
  */
 import type { Organization } from "@/lib/types";
-import { localize, type Locale } from "@/lib/i18n";
+import { localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 
 export function OrgList({
@@ -54,7 +54,7 @@ export function OrgList({
                     className="rounded-md border border-emerald-700/30 bg-emerald-950/40 p-3"
                   >
                     <dt className="text-[0.7rem] font-medium uppercase tracking-wide text-emerald-300/60">
-                      {fact.labelPt}
+                      {pick(locale, fact.labelPt, fact.labelEn)}
                     </dt>
                     <dd className="mt-1 font-display text-lg font-semibold tabular-nums text-cork-soft">
                       {fact.value}

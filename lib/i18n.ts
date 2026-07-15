@@ -26,6 +26,15 @@ export function localize(locale: Locale, value: { pt: string; en?: string }): st
   return locale === "en" ? value.en ?? value.pt : value.pt;
 }
 
+/**
+ * Same idea as `localize`, but for datasets that store their two languages as
+ * separate `*Pt` / `*En` fields (species, stats, sections) rather than a nested
+ * `{ pt, en }` object. Returns EN when present, otherwise falls back to PT.
+ */
+export function pick(locale: Locale, pt: string, en?: string): string {
+  return locale === "en" ? en ?? pt : pt;
+}
+
 /** UI chrome strings — short, safe to translate now (not cited content). */
 const DICTIONARY = {
   pt: {
@@ -40,8 +49,10 @@ const DICTIONARY = {
     otherLangName: "English",
     scrollToEnter: "Deslize para entrar na floresta",
     backToTop: "Voltar ao topo",
-    forestRevealCaption: "A floresta nativa abre-se — e por trás dela, o eucaliptal arde.",
-    forestRestoreCaption: "Onde o eucalipto ardeu, a floresta nativa regressa.",
+    forestRevealCaption:
+      "Pelo meio da escassa vegetação nativa já se vê a paisagem habitual, um eucaliptal em chamas.",
+    forestRestoreCaption:
+      "Onde os eucaliptos deixaram a sua marca, aos poucos a ferida vai sarando com floresta autóctone.",
     fireBehaviour: {
       resists: "Resiste ao fogo",
       resprouts: "Rebenta após o fogo",
@@ -61,8 +72,10 @@ const DICTIONARY = {
     otherLangName: "Português",
     scrollToEnter: "Scroll to enter the forest",
     backToTop: "Back to top",
-    forestRevealCaption: "The native forest opens — and behind it, the eucalyptus plantation burns.",
-    forestRestoreCaption: "Where the eucalyptus burned, the native forest returns.",
+    forestRevealCaption:
+      "Through the thin native vegetation, the familiar landscape shows through: a eucalyptus plantation in flames.",
+    forestRestoreCaption:
+      "Where the eucalyptus left its mark, the wound slowly heals over with native forest.",
     fireBehaviour: {
       resists: "Fire-resistant",
       resprouts: "Resprouts after fire",

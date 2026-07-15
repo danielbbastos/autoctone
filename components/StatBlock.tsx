@@ -11,7 +11,7 @@
  * in the dataset and listed in the Sources footer).
  */
 import type { Stat } from "@/lib/types";
-import { getDictionary, localize, type Locale } from "@/lib/i18n";
+import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 import { Disclosure } from "./Disclosure";
 
@@ -23,10 +23,10 @@ export function StatBlock({ stat, locale }: { stat: Stat; locale: Locale }) {
         <span className="font-display text-4xl font-semibold tabular-nums leading-none text-emerald-50 sm:text-5xl">
           {stat.value}
         </span>
-        <span className="text-base font-medium text-cork">{stat.unitPt}</span>
+        <span className="text-base font-medium text-cork">{pick(locale, stat.unitPt, stat.unitEn)}</span>
       </div>
       <figcaption className="mt-3 max-w-xs text-sm leading-relaxed text-emerald-200/80">
-        {stat.labelPt}
+        {pick(locale, stat.labelPt, stat.labelEn)}
       </figcaption>
       <SourceMarks sources={stat.sources} />
 

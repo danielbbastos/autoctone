@@ -56,7 +56,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
     <>
       <SkipLink label={dict.skipToContent} />
       <LangToggle locale={locale} label={dict.language} otherLabel={dict.otherLangName} />
-      <SectionNav sections={SECTIONS} label={dict.sections} />
+      <SectionNav sections={SECTIONS} label={dict.sections} locale={locale} />
       {/* This page (a Server Component) computes the label, then hands it to the
           one Client Component on the site — see components/BackToTop.tsx. */}
       <BackToTop label={dict.backToTop} />
