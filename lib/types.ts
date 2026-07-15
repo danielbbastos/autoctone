@@ -77,7 +77,10 @@ export type Organization = {
 export type OrgFact = {
   labelPt: string;
   labelEn?: string;
+  /** The figure itself. Mostly language-neutral, but `valueEn` overrides it
+   * when the string embeds words (e.g. "papel"/"pasta", "mil t/ano"). */
   value: string;
+  valueEn?: string;
   sources: SourceRef[];
 };
 

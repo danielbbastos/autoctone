@@ -57,7 +57,7 @@ export function OrgList({
                       {pick(locale, fact.labelPt, fact.labelEn)}
                     </dt>
                     <dd className="mt-1 font-display text-lg font-semibold tabular-nums text-cork-soft">
-                      {fact.value}
+                      {pick(locale, fact.value, fact.valueEn)}
                     </dd>
                   </div>
                 ))}
