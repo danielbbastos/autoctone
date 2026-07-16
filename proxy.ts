@@ -1,18 +1,9 @@
-/* Proxy (Next 16's renamed middleware): redirects locale-less paths using
- * Accept-Language. Detection is hand-rolled — project rule: no new deps. */
+/* Proxy (Next 16's renamed middleware): redirects locale-less paths to the
+ * default locale. PT is the site's voice — everyone lands on /pt and opts
+ * into EN via the toggle; no Accept-Language negotiation. */
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { LOCALES, DEFAULT_LOCALE, isLocale } from "@/lib/i18n";
-
-function detectLocale(request: NextRequest): string {
-  const header = request.headers.get("accept-language");
-  if (!header) return DEFAULT_LOCALE;
-  // "pt-PT,pt;q=0.9,en;q=0.8" → ordered base language tags.
-  const preferred = header
-    .split(",")
-    .map((part) => part.split(";")[0].trim().split("-")[0].toLowerCase());
-  return preferred.find(isLocale) ?? DEFAULT_LOCALE;
-}
+import { LOCALES, DEFAULT_LOCALE } from "@/lib/i18n";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,7 +13,7 @@ export function proxy(request: NextRequest) {
   );
   if (hasLocale) return;
 
-  request.nextUrl.pathname = `/${detectLocale(request)}${pathname}`;
+  request.nextUrl.pathname = `/${DEFAULT_LOCALE}${pathname}`;
   return NextResponse.redirect(request.nextUrl);
 }
 
