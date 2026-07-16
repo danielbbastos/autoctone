@@ -1,14 +1,6 @@
-/**
- * "Skip to content" link — visually hidden until focused, then jumps past the
- * fixed nav to the main content.
- *
- * Concept demonstrated: an accessibility affordance built with Tailwind's
- * `sr-only` / `focus-visible:not-sr-only` utilities. The reveal keys off
- * `:focus-visible` (keyboard-heuristic focus), not plain `:focus`: the App
- * Router programmatically focuses the top of the page after client-side
- * navigation (e.g. the language toggle), and `:focus` would make the link
- * flash visible on every locale switch. Server Component, no JS.
- */
+/* Reveal keys off `focus-visible`, not `focus`: the App Router focuses the page
+ * top after client-side navigation, and plain :focus would flash the link on
+ * every locale switch. */
 export function SkipLink({ label }: { label: string }) {
   return (
     <a

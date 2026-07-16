@@ -5,26 +5,20 @@
  * scenes, and reduced-motion rendering — in Chromium AND WebKit (Safari engine).
  */
 import { expect, test } from "@playwright/test";
+import { getDictionary } from "../lib/i18n";
 
-// The proxy negotiates the locale from the Accept-Language header, which
-// Playwright derives from the context `locale` — so each browser context
-// exercises one side of the negotiation.
-test.describe("locale negotiation (proxy)", () => {
-  test.describe("Portuguese browser", () => {
-    test.use({ locale: "pt-PT" });
-    test("/ lands on /pt", async ({ page }) => {
+// Assert captions via the dictionary so copy edits can't silently strand the test.
+const PT = getDictionary("pt");
+
+// PT is the default for everyone — even an English browser lands on /pt and
+// opts into EN via the toggle.
+test.describe("default locale (proxy)", () => {
+  test.describe("English browser", () => {
+    test.use({ locale: "en-US" });
+    test("/ lands on /pt regardless of browser language", async ({ page }) => {
       await page.goto("/");
       await expect(page).toHaveURL(/\/pt$/);
       await expect(page.locator("html")).toHaveAttribute("lang", "pt");
-    });
-  });
-
-  test.describe("English browser", () => {
-    test.use({ locale: "en-US" });
-    test("/ lands on /en", async ({ page }) => {
-      await page.goto("/");
-      await expect(page).toHaveURL(/\/en$/);
-      await expect(page.locator("html")).toHaveAttribute("lang", "en");
     });
   });
 });
@@ -49,7 +43,7 @@ test("scrolling into the forest scene shows the sticky stage caption", async ({
   await page.goto("/pt");
   await page.locator("#floresta").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("A floresta nativa abre-se — e no centro, o eucalipto arde."),
+    page.getByText(PT.forestRevealCaption),
   ).toBeVisible();
 });
 
@@ -64,7 +58,7 @@ test.describe("reduced motion", () => {
     await page.locator("#floresta").scrollIntoViewIfNeeded();
     // Static fallback: layers sit at their parted base transform, no animation.
     await expect(
-      page.getByText("A floresta nativa abre-se — e no centro, o eucalipto arde."),
+      page.getByText(PT.forestRevealCaption),
     ).toBeVisible();
   });
 });

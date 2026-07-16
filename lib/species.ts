@@ -1,17 +1,6 @@
-/**
- * Species dataset — the native fire-fighting forest and the eucalyptus that
- * replaced it. Ordered as the gallery reads: allies first, invader last.
- *
- * Concept demonstrated: `satisfies` + `as const`. Writing
- * `[...] as const satisfies readonly Species[]` type-checks every entry against
- * `Species` (a missing citation fails the build) while *preserving* the literal
- * `slug` values, so `SPECIES[0].slug` is the string "sobreiro", not `string`.
- * That literal precision is what later lets `getSpecies("sobreiro")` autocomplete.
- *
- * SOURCES: every figure below references the `lib/sources.ts` registry by id;
- * the per-use `note` records the exact figure. URLs live in the registry and
- * should be re-verified before the site ships (README, Phase 5).
- */
+/* Species dataset, ordered as the gallery reads (allies first, invader last).
+ * `as const satisfies` keeps literal slugs while type-checking every citation.
+ * Registry URLs must be re-verified before the site ships. */
 import type { Species } from "./types";
 
 export const SPECIES = [

@@ -1,13 +1,5 @@
-/**
- * The eucalyptus revealed in the centre of the forest — on fire, or (in the
- * finale) already burnt.
- *
- * Concept demonstrated: continuous CSS keyframe animation (flame flicker, rising
- * smoke, pulsing glow) layered independently of the scroll-driven parting. It is
- * decorative (`aria-hidden`) and every animation lives inside a
- * `prefers-reduced-motion: no-preference` guard, so a reduced-motion user sees a
- * static, still-legible scene. Colours come from the shared `<ForestDefs />`.
- */
+/* Burning (or burnt) eucalyptus. Currently unrendered — kept for the Pedrógão
+ * sequence. Flame/smoke/glow keyframes + reduced-motion guard in globals.css. */
 export function BurningEucalyptus({ burnt = false }: { burnt?: boolean }) {
   const barkFill = burnt ? "url(#char)" : "url(#bark-pale)";
 

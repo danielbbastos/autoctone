@@ -1,19 +1,6 @@
-/**
- * The single source registry for the whole site.
- *
- * Concept demonstrated: a normalized reference table. Every factual claim used
- * to carry its full citation inline; now each claim holds only a lightweight
- * `SourceRef` (an `id`, plus an optional per-use `note` recording the exact
- * figure). The canonical source text lives here, once. Two payoffs:
- *   1. De-duplication — the same source cited in ten places is ONE numbered
- *      footnote, not ten near-identical strings.
- *   2. Stable numbering — the footnote number is just the key's position in
- *      insertion order, computed in one place (`sourceNumber`).
- *
- * `short` is the 1–2 word label shown next to the inline number (e.g. "12 ICNF").
- * Keys are the stable ids that claims reference and that the footer anchors use
- * (`#fonte-<id>`), so renaming a key is a breaking change — add, don't rename.
- */
+/* Normalized source registry: claims reference these by id. Insertion order
+ * defines the footnote numbers, and keys are anchor targets (#fonte-<id>) —
+ * renaming a key is a breaking change; add, don't rename. */
 
 /** A canonical source. `note` is NOT here — notes are per-use, on the ref. */
 export type Source = {
@@ -27,11 +14,6 @@ export type Source = {
   year?: number;
 };
 
-/**
- * Insertion order defines the footnote numbers, so keep the most-cited,
- * foundational sources near the top. `satisfies` checks each entry without
- * widening the object, so `SourceId` stays a precise union of these keys.
- */
 export const SOURCES = {
   ifn6: {
     short: "ICNF",

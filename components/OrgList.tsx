@@ -1,13 +1,4 @@
-/**
- * A list of organizations (either the pulp economy or the resistance), each
- * with its defining cited claim, an optional row of key figures, and a name
- * that links to the organization's website when one is known.
- *
- * Concept demonstrated: a reusable component parameterised by props. The same
- * component renders both "who profits" and "who resists" — the page passes the
- * right slice of data (`PROFIT_ORGS` or `RESIST_ORGS`) as the `orgs` prop. The
- * claim text is localized through `localize`, falling back to PT.
- */
+// One component for both sides — the page passes PROFIT_ORGS or RESIST_ORGS.
 import type { Organization } from "@/lib/types";
 import { localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";

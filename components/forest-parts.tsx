@@ -1,16 +1,6 @@
-/**
- * Shared forest artwork for the reveal/restore scenes.
- *
- * The trees are illustrated PNG→WebP images (public/trees/*.webp), placed as a
- * dense, overlapping forest across three DEPTH layers (far / mid / near). Each
- * depth slides a different distance on scroll (`--slide` in globals.css), so the
- * near trees travel faster than the far ones — a parallax that sells perspective.
- * Instances are reused and flipped/resized for variety.
- *
- * `<ForestDefs />` still holds the gradients the burning eucalyptus needs; it is
- * rendered once at page level. `<ForestAtmosphere />` is the shared decorative
- * layer (mist, light shafts, ground plane, motes) both scenes render.
- */
+/* Shared forest artwork for the reveal/restore scenes: tree images placed
+ * across depth layers that slide different distances on scroll (--slide in
+ * globals.css) — near travels furthest, which is what sells the parallax. */
 export function ForestDefs() {
   return (
     <svg width="0" height="0" aria-hidden className="absolute">
@@ -40,12 +30,7 @@ export function ForestDefs() {
   );
 }
 
-/**
- * Atmosphere overlay shared by the reveal and restore scenes: mist bands slotted
- * between the depth layers, diagonal light shafts, a forest-floor gradient and
- * drifting motes. Static markup only — every effect (and its reduced-motion
- * fallback) lives in globals.css.
- */
+/** Shared atmosphere (mist, shafts, ground, motes) — all styling in globals.css. */
 export function ForestAtmosphere() {
   return (
     <>
@@ -65,11 +50,8 @@ export function ForestAtmosphere() {
   );
 }
 
-// Species artwork with a deliberate casting hierarchy:
-// 0–2 (sobreiro, carvalho, azinheira) carry the forest and appear everywhere;
-// 3 (castanheiro) is an occasional accent; 4+5 (freixo, salgueiro) are the
-// riparian pair — they only ever appear side by side (a galeria ripícola grows
-// along water, not scattered through a hillside), at the edges or in the back.
+// Casting: 0–2 (oaks) carry the forest; 3 (chestnut) is an accent; 4+5 are the
+// riparian pair and only ever appear side by side — they grow along water.
 const TREE_IMAGES = [
   "/trees/sobreiro.webp", // 0 — cork oak, the protagonist
   "/trees/carvalho.webp", // 1 — common oak
@@ -83,17 +65,9 @@ const TREE_IMAGES = [
 /** img = index into TREE_IMAGES; left = % across; height = --fu units (≈vh); flip = mirror. */
 export type ImgTree = { img: number; left: number; height: number; flip?: boolean };
 
-/**
- * One depth layer of tree images. The layer div is what the CSS slides.
- * `sink` pushes every image below the section bottom: the artwork's
- * elliptical ground mound puts the trunk base a little above the image's
- * bottom edge, so far layers read as floating unless they overhang — the
- * scrollport's overflow clipping hides the sunken part.
- *
- * Heights are multiples of `--fu` (defined on .forest-stage in globals.css):
- * `min(1vh, 1.5vw)`, i.e. 1vh on wide screens but width-clamped on phones so
- * the trees shrink with the viewport instead of overcrowding it.
- */
+/* One depth layer; the layer div is what the CSS slides. `sink` overhangs the
+ * artwork's ground mound below the stage so trunk bases sit on the ground line.
+ * Sizes are multiples of --fu (globals.css) so phones get a zoomed-out forest. */
 export function ImgTreeLayer({
   trees,
   className,
@@ -125,59 +99,36 @@ export function ImgTreeLayer({
   );
 }
 
-// ── Permanent backdrop ─────────────────────────────────────────────────────
-// A dense band of small, far-off trees that ALWAYS fills the centre. Unlike the
-// depth layers below, its layer div carries no `reveal-*`/`restore-*` class, so
-// the parting animation's selectors never match it — it stays put while the
-// forest opens, and the scene never reveals empty sky at its core.
-// Generated (not hand-placed) so it can be truly dense: ~2 trees every 7% of
-// width, in two slightly offset rows, with an index-driven (deterministic, so
-// SSR-safe) uneven skyline.
-// The mix is weighted (oaks dominate, chestnut occasional) and slots the
-// freixo+salgueiro riparian pair in as adjacent entries, twice across the band.
+// Permanent backdrop: no reveal-*/restore-* class, so the parting animation
+// never matches it — the centre stays wooded. Index-driven values keep the
+// generated band deterministic (SSR-safe).
 const BACKDROP_COUNT = 30;
 const BACKDROP_MIX = [0, 1, 2, 0, 3, 1, 4, 5, 2, 0, 1, 2, 3, 0, 2];
 export const BACKDROP: ImgTree[] = Array.from({ length: BACKDROP_COUNT }, (_, i) => ({
   img: BACKDROP_MIX[i % BACKDROP_MIX.length],
-  // Spread across the full width with a small per-row offset so trunks don't line up.
   left: (i * 100) / (BACKDROP_COUNT - 1) + (i % 2 === 0 ? 0 : 2.5) - 2,
-  // 22–34vh, gently uneven so the treetops read as a distant canopy, not a wall.
   height: 22 + ((i * 7) % 5) * 3,
   flip: i % 2 === 0,
 }));
 
-// ── Reveal stay-layer ──────────────────────────────────────────────────────
-// The FINAL domino piece of the reveal: two half-bands that barely slide
-// (--slide in globals.css), opening a ~20vw gap at the centre and stopping —
-// the scene never fully unfolds. Generated like BACKDROP; a shuffled image
-// order (not 1-2-3-4 marching) so the band doesn't read as one repeated tree.
+// Reveal stay-layer: the final domino piece — barely slides, opening only a
+// ~20vw centre gap so the scene never fully unfolds.
 const STAY_MIX = [1, 2, 0, 2, 1, 0, 3, 2];
 const STAY_HALF = 13;
 function stayHalf(from: number, to: number, seed: number): ImgTree[] {
   return Array.from({ length: STAY_HALF }, (_, i) => ({
     img: STAY_MIX[(i + seed) % STAY_MIX.length],
     left: from + (i * (to - from)) / (STAY_HALF - 1) + (i % 2 === 0 ? 0 : 1.8),
-    height: 37 + (((i + seed) * 7) % 5) * 2, // 37–45vh: 20% under the old band
+    height: 37 + (((i + seed) * 7) % 5) * 2,
     flip: (i + seed) % 2 === 0,
   }));
 }
 export const REVEAL_STAY_LEFT = stayHalf(-2, 46, 0);
 export const REVEAL_STAY_RIGHT = stayHalf(54, 102, 3);
 
-// ── Depth compositions ─────────────────────────────────────────────────────
-// Left-side trees slide left, right-side slide right. Five depths from near
-// (big, front, fastest) to far3 (back, slowest) build a deep forest; the
-// centre columns keep the middle dense so it reads as closed before it parts.
-// Even the deepest layer stays ≥50vh so the forest fills the frame.
-// Casting per depth: near/mid are carried by the oak trio (one chestnut accent
-// each side, mid only); the riparian freixo+salgueiro pair sits together at the
-// outer edges of the FAR layer — background and sides, never centre stage.
-// Understory shrubs (img 6) fill the gaps between trunks in near/mid/far, kept
-// under half the height of their layer's trees, flips varied so the one asset
-// reads as several different bushes.
-// The foreground is deliberately sparse: ONE hero tree per side (~84vh, not
-// full-bleed) plus a shrub; everything else lives from mid back, so the big
-// trees frame the scene instead of walling it off.
+// Depth compositions, near (front, slides fastest) → far3 (back, slowest).
+// Hand-placed: centre stays dense so the scene reads as closed before parting;
+// the riparian pair only sits together at the FAR layer's outer edges.
 const LEFT_NEAR: ImgTree[] = [
   { img: 0, left: 6, height: 84 },
   { img: 6, left: 17, height: 40, flip: true },
@@ -247,10 +198,7 @@ const RIGHT_FAR3: ImgTree[] = [
   { img: 1, left: 54, height: 54, flip: true },
 ];
 
-/** Depth layers, back → front. The scene maps over these; the burning
- * eucalyptus is layered between `far` and `mid` purely via z-index (globals).
- * `sink` grows with distance: back layers overhang the bottom more so their
- * trunk bases sit on the ground line (see ImgTreeLayer). */
+/** Depth layers, back → front; `sink` grows with distance (see ImgTreeLayer). */
 export const DEPTHS = [
   { name: "far3", left: LEFT_FAR3, right: RIGHT_FAR3, sink: 4 },
   { name: "far2", left: LEFT_FAR2, right: RIGHT_FAR2, sink: 4 },

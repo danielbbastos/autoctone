@@ -1,26 +1,20 @@
-/**
- * Dynamically generated social-share image (Open Graph / Twitter card), one per
- * locale.
- *
- * Concept demonstrated: `next/og`'s `ImageResponse` renders JSX to a PNG at the
- * edge — no design tool, no committed image asset, and it stays in sync with the
- * site's wording. `size` and `contentType` are the file-convention exports Next
- * reads to wire the `<meta>` tags automatically.
- */
+/* Social-share image rendered from JSX per locale (next/og ImageResponse) —
+ * no committed asset, stays in sync with the site's wording. */
 import { ImageResponse } from "next/og";
 import { LOCALES, DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n";
+import { SITE_NAME, THEME_COLOR } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Autóctone";
+export const alt = SITE_NAME;
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
 
 const COPY: Record<Locale, { title: string; tagline: string }> = {
-  pt: { title: "Autóctone", tagline: "A floresta que resiste ao fogo" },
-  en: { title: "Autóctone", tagline: "The forest that resists fire" },
+  pt: { title: SITE_NAME, tagline: "A floresta que resiste ao fogo" },
+  en: { title: SITE_NAME, tagline: "The forest that resists fire" },
 };
 
 export default async function Image({ params }: { params: Promise<{ lang: string }> }) {
@@ -38,7 +32,7 @@ export default async function Image({ params }: { params: Promise<{ lang: string
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "linear-gradient(135deg, #022c22 0%, #064e3b 100%)",
+          background: `linear-gradient(135deg, ${THEME_COLOR} 0%, #064e3b 100%)`,
           color: "#ecfdf5",
           fontFamily: "sans-serif",
         }}

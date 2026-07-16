@@ -1,17 +1,6 @@
 "use client";
-/**
- * The collapsible Sources section at the foot of the page: a numbered list of
- * every source in the registry, in the same order the inline markers number
- * them. It is the jump target for every `SourceMarks` chip.
- *
- * Concept demonstrated: bridging the URL hash to component state. Inline
- * markers are plain anchors (`#fonte-<id>`) — server-rendered, zero JS. This
- * client component listens for the hash (on mount and on `hashchange`), opens
- * the list, then scrolls to and focuses the matching entry. Doing it here keeps
- * the markers themselves free of client code. Motion respects
- * `prefers-reduced-motion`; the focused row is highlighted via the CSS
- * `:target` selector.
- */
+/* Collapsible source list — the #fonte-<id> jump target for every SourceMarks
+ * chip. Listens for the hash, opens, scrolls to and focuses the entry. */
 import { useEffect, useState } from "react";
 import { SOURCE_ORDER, getSource, sourceNumber } from "@/lib/sources";
 

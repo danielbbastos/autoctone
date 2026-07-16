@@ -1,10 +1,4 @@
-/**
- * Fixed language toggle linking to the other locale's route.
- *
- * Concept demonstrated: locale switching is just navigation. `next/link` points
- * at the sibling locale root (`/pt` ↔ `/en`); no client state, no context — the
- * URL is the source of truth. `hrefLang` tells crawlers what they'll get.
- */
+// Locale switching is just navigation — the URL is the source of truth.
 import Link from "next/link";
 import { otherLocale, type Locale } from "@/lib/i18n";
 
@@ -19,7 +13,10 @@ export function LangToggle({
 }) {
   const target = otherLocale(locale);
   return (
-    <nav aria-label={label} className="fixed right-4 top-4 z-40">
+    <nav
+      aria-label={label}
+      className="fixed right-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))] z-40"
+    >
       <Link
         href={`/${target}`}
         hrefLang={target}
