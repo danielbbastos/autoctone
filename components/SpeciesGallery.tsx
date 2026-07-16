@@ -1,19 +1,10 @@
-/**
- * The native-species gallery: one card per ally, each with its tree, names, a
- * fire-behaviour badge, the full description, and its sources.
- *
- * Concept demonstrated: rendering a list from data with a stable `key`. The
- * `slug` is a guaranteed-unique string from the dataset, so it makes a correct
- * React key — never the array index, which would break if the list reordered.
- * The fire-behaviour label is localized via the UI dictionary.
- */
+// One card per native species, keyed by the dataset's unique slug.
 import { NATIVE_SPECIES } from "@/lib/species";
 import { getDictionary, pick, type Locale } from "@/lib/i18n";
 import type { FireBehaviour } from "@/lib/types";
 import { SourceMarks } from "./SourceMarks";
 import { TreeSvg } from "./TreeSvg";
 
-// Badge colour per fire behaviour — greens for allies, amber for the accelerant.
 const BADGE_CLASS: Record<FireBehaviour, string> = {
   resists: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
   resprouts: "bg-teal-500/15 text-teal-300 ring-teal-500/30",
@@ -21,8 +12,6 @@ const BADGE_CLASS: Record<FireBehaviour, string> = {
   accelerant: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
 };
 
-// A thin top rule tinted to the same fire-behaviour hue — a quiet visual key
-// that ties each card to its badge without shouting.
 const ACCENT_CLASS: Record<FireBehaviour, string> = {
   resists: "bg-emerald-400/70",
   resprouts: "bg-teal-400/70",
@@ -39,12 +28,10 @@ export function SpeciesGallery({ locale }: { locale: Locale }) {
           key={species.slug}
           className="relative isolate flex flex-col overflow-hidden rounded-lg border border-emerald-600/30 bg-emerald-950/50 p-5"
         >
-          {/* Fire-behaviour accent rule pinned to the card's top edge. */}
           <span
             aria-hidden
             className={`absolute inset-x-0 top-0 h-1 ${ACCENT_CLASS[species.fireBehaviour]}`}
           />
-          {/* A photo of the species sits faintly behind the card content. */}
           <div
             className="species-card-bg"
             style={{ backgroundImage: `url(/species/${species.slug}.jpg)` }}

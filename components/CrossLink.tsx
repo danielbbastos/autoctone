@@ -1,12 +1,4 @@
-/**
- * A pill-shaped "read why" link that jumps to a deep-dive section further down
- * the page (e.g. "Porque é que isto acontece?" → the fire-ecology section).
- *
- * Concept demonstrated: a Server Component that localizes its own label via
- * `localize` (PT with EN fallback). It is just a styled `<a href="#id">`, so
- * the browser's native in-page anchor jump (smoothed by CSS `scroll-behavior`)
- * does all the work — no JavaScript.
- */
+// Pill link that jumps to a deep-dive section — native anchor, no JS.
 import { localize, type Locale } from "@/lib/i18n";
 
 export function CrossLink({

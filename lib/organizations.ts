@@ -1,19 +1,6 @@
-/**
- * Organizations dataset — the pulp economy that planted eucalyptus, and the
- * movement pushing back, plus the 2017 law that froze net expansion.
- *
- * Concept demonstrated: reusing the `Claim` type so the *defining statement*
- * about each actor is itself citation-bearing. The project rule ("any claim
- * about companies or NGOs must carry a citation") is enforced structurally —
- * you cannot add an org without attaching at least the `claim.sources`.
- *
- * `site` makes the org name a link; `facts` is an optional row of compact,
- * separately-cited figures (capital, market share, founding year).
- *
- * Editorial note: claims about companies are kept to factual, sourced
- * statements (market position, financials, sector role). Any stronger
- * characterisation belongs in narrative copy, attributed and cited there.
- */
+/* Organizations dataset. Claims about companies stay factual and sourced
+ * (market position, financials, sector role) — stronger characterisation
+ * belongs in narrative copy, attributed and cited there. */
 import type { Organization } from "./types";
 
 export const ORGANIZATIONS = [

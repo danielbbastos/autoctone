@@ -1,22 +1,10 @@
-/**
- * Stylised inline tree illustrations, one silhouette per species.
- *
- * Concept demonstrated: a component driven by a discriminated "shape", not a
- * pile of booleans. Each species maps to one `TreeShape`; a small render map
- * turns that shape into SVG. Every silhouette keeps the same addressable parts —
- * `#{slug}-crown` and `#{slug}-trunk` — so the Phase 4 scroll animation targets
- * them uniformly regardless of which tree is drawn.
- *
- * Everything is inline SVG using `currentColor`, so the parent picks the crown
- * colour with a Tailwind `text-*` class and dark/light theming comes for free.
- * No image files, no animation library — per the project's dependency rule.
- */
+/* Inline SVG tree per species, drawn in `currentColor` so the parent sets the
+ * hue with a text-* class. Crown/trunk keep addressable ids for animation. */
 import type { SpeciesSlug } from "@/lib/species";
 
 type TreeShape = "cork-oak" | "holm-oak" | "oak" | "shrub" | "riparian" | "eucalyptus";
 
-// Which drawing each species uses. Presentation lives here, not in the dataset,
-// so lib/species.ts stays pure content.
+// Presentation mapping lives here so lib/species.ts stays pure content.
 const SHAPE_BY_SLUG: Record<SpeciesSlug, TreeShape> = {
   sobreiro: "cork-oak",
   azinheira: "holm-oak",

@@ -1,10 +1,4 @@
-/**
- * Screen 1: a calm, text-only landing. The forest sequence begins one screen
- * below, so the page opens on the message, not the spectacle.
- *
- * This holds the page's single <h1>. (Placeholder copy for now — will be
- * designed out later.)
- */
+// Landing screen — holds the page's single <h1>.
 import type { Section } from "@/lib/narrative";
 import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
@@ -24,8 +18,6 @@ export function LandingHero({
       id={section.id}
       className="landing relative isolate flex min-h-screen snap-start flex-col items-center justify-center px-6 text-center"
     >
-      {/* Native-forest photo backdrop (drop public/landing-forest.jpg) + a
-          legibility scrim. Opacity is tuned in globals.css (`.landing-bg`). */}
       <div className="landing-bg" />
       <div className="landing-scrim" />
       <p className="flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-cork-soft drop-shadow">

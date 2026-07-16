@@ -5,6 +5,10 @@
  * scenes, and reduced-motion rendering — in Chromium AND WebKit (Safari engine).
  */
 import { expect, test } from "@playwright/test";
+import { getDictionary } from "../lib/i18n";
+
+// Assert captions via the dictionary so copy edits can't silently strand the test.
+const PT = getDictionary("pt");
 
 // The proxy negotiates the locale from the Accept-Language header, which
 // Playwright derives from the context `locale` — so each browser context
@@ -49,7 +53,7 @@ test("scrolling into the forest scene shows the sticky stage caption", async ({
   await page.goto("/pt");
   await page.locator("#floresta").scrollIntoViewIfNeeded();
   await expect(
-    page.getByText("A floresta nativa abre-se — e no centro, o eucalipto arde."),
+    page.getByText(PT.forestRevealCaption),
   ).toBeVisible();
 });
 
@@ -64,7 +68,7 @@ test.describe("reduced motion", () => {
     await page.locator("#floresta").scrollIntoViewIfNeeded();
     // Static fallback: layers sit at their parted base transform, no animation.
     await expect(
-      page.getByText("A floresta nativa abre-se — e no centro, o eucalipto arde."),
+      page.getByText(PT.forestRevealCaption),
     ).toBeVisible();
   });
 });

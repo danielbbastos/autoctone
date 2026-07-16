@@ -1,16 +1,5 @@
-/**
- * Shared content types for the Autóctone datasets.
- *
- * Concept demonstrated: a typed "content layer". Every fact the site shows
- * lives in `lib/` as a plain object that must match one of these types, so the
- * compiler — not a human reviewer — guarantees each claim carries at least one
- * source. Components downstream just map over these; they never hold copy of
- * their own.
- *
- * Sources are referenced, not inlined: a claim holds `SourceRef`s (an id into
- * the `lib/sources.ts` registry plus an optional per-use note). See that file
- * for why (de-duplication + stable footnote numbering).
- */
+/* Content-layer types. Every dataset entry must match one of these, so the
+ * compiler — not a reviewer — guarantees each claim carries a source. */
 import type { SourceRef } from "./sources";
 
 export type { SourceRef } from "./sources";
@@ -89,6 +78,8 @@ export type Stat = {
   slug: string;
   /** The number itself, pre-formatted, e.g. "845 000" or "66". */
   value: string;
+  /** Overrides `value` when EN formatting differs (e.g. "845,000"). */
+  valueEn?: string;
   /** Unit or short qualifier, e.g. "hectares" or "mortos". */
   unitPt: string;
   unitEn?: string;

@@ -1,14 +1,6 @@
-/**
- * Narrative dataset — the site's script, one entry per scroll section, in the
- * order they render top-to-bottom (see README "The story the site tells").
- *
- * Concept demonstrated: separating *content order* from *component code*. The
- * page will `SECTIONS.map(...)` to lay out the scrollytelling spine, so
- * reordering the story is a data edit, not a JSX refactor. `kicker`/`title`
- * are plain copy; anything factual is a cited `Claim` or lives in `STATS`.
- * `pullQuote` is optional editorial framing (no new numbers); `link` is an
- * optional cross-reference button that jumps to a deep-dive section.
- */
+/* The site's script, one entry per scroll section, in render order.
+ * Reordering the story is a data edit, not a JSX refactor; anything factual
+ * must be a cited Claim or live in STATS. */
 import type { Claim, Stat } from "./types";
 
 /** One scroll section of the single-page story. */
@@ -428,6 +420,7 @@ export const STATS = [
   {
     slug: "eucalipto-ha",
     value: "845 000",
+    valueEn: "845,000",
     unitPt: "hectares",
     unitEn: "hectares",
     labelPt: "de eucalipto — a espécie mais comum de Portugal",
@@ -463,6 +456,7 @@ export const STATS = [
   {
     slug: "ano-2017-ardido",
     value: "≈ 540 000",
+    valueEn: "≈ 540,000",
     unitPt: "hectares ardidos",
     unitEn: "hectares burned",
     labelPt: "em 2017 — o pior ano de incêndios registado em Portugal",

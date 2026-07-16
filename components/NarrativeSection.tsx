@@ -1,16 +1,5 @@
-/**
- * The shell every scroll section shares: a full-height band with a ghost
- * numeral, kicker, serif heading (the largest type on screen), its body
- * paragraphs (the first one drop-capped), one de-duplicated row of the section's
- * sources, an optional pull-quote, an optional cross-link, and a content slot.
- *
- * Concept demonstrated: composition via `children` plus a configurable heading
- * level. The page passes `heading="h1"` for the hero and `"h2"` for the rest, so
- * the document keeps a single top-level heading (a11y/SEO) without special-casing
- * the markup. Rather than repeat a chip under every paragraph (the same source
- * often backs several), the section's sources are collected once — unique, in
- * first-seen order — and listed at the foot of the copy.
- */
+/* Shared shell for every scroll section. `heading` is configurable so the page
+ * keeps a single <h1>; body sources are de-duplicated into one footer row. */
 import type { ReactNode } from "react";
 import type { Section } from "@/lib/narrative";
 import type { SourceRef } from "@/lib/types";
@@ -38,10 +27,10 @@ export function NarrativeSection({
   children?: ReactNode;
 }) {
   const dict = getDictionary(locale);
-  const Heading = heading; // capitalized → React treats it as a component/tag
+  const Heading = heading;
 
   const kicker = pick(locale, section.kicker, section.kickerEn);
-  // The kicker is "06 · O fogo"; the leading number feeds the ghost numeral.
+  // Kickers are "06 · O fogo" — the number before the · feeds the ghost numeral.
   const index = kicker.split("·")[0]?.trim();
   const sources = collectSources(section);
 

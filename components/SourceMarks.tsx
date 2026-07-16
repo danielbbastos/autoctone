@@ -1,16 +1,5 @@
-/**
- * Inline source markers: for each `SourceRef`, a small footnote link showing the
- * registry number + the source's short label (e.g. "¹² ICNF"). Clicking jumps to
- * `#fonte-<id>` in the collapsible Sources footer, which opens and focuses that
- * entry (see components/SourcesFooter.tsx).
- *
- * Concept demonstrated: a leaf Server Component reading from a normalized
- * registry. It ships zero JavaScript — the "scroll + expand + focus" behaviour
- * lives entirely in the footer's client component, reached by a plain anchor.
- * Kept deliberately light (no pill, small type) so a row of sources reads as a
- * quiet footnote, not a stack of buttons. An optional `label` prefixes the row
- * where the sources are aggregated for a whole section.
- */
+/* Footnote links into the Sources footer (#fonte-<id>); the footer's client
+ * component handles the open/scroll/focus behaviour. */
 import type { SourceRef } from "@/lib/types";
 import { getSource, sourceNumber } from "@/lib/sources";
 

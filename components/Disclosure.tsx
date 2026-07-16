@@ -1,15 +1,5 @@
 "use client";
-/**
- * A "reveal more" toggle styled as a pill button (matching CrossLink): a rounded
- * cork-outlined control with a rotating arrow that shows/hides its children.
- * Used for the "Quanto é isto?" size comparisons under a headline stat.
- *
- * Concept demonstrated: the client boundary kept as low as possible. Only the
- * open/closed boolean and the click handler need the browser, so only this
- * wrapper is a Client Component — the content it reveals is passed in as
- * `children`, still rendered on the server. The arrow's rotation is disabled
- * under `prefers-reduced-motion` (Tailwind `motion-reduce:`).
- */
+// Client wrapper for the open/closed state only — `children` stay server-rendered.
 import { useId, useState, type ReactNode } from "react";
 
 export function Disclosure({ label, children }: { label: string; children: ReactNode }) {

@@ -1,13 +1,5 @@
-/**
- * Internationalization scaffold. PT is the default and only fully-written
- * locale; EN is wired end-to-end but its *content* translations are a follow-up
- * (the cited datasets still carry PT copy, surfaced via `localize` fallback).
- *
- * Concept demonstrated: a locale is just a URL segment (`/pt`, `/en`) plus a
- * dictionary lookup. This file owns three things — the list of locales, the UI
- * "chrome" strings (labels, not content), and small helpers — so components and
- * the `[lang]` routes stay declarative.
- */
+/* i18n: a locale is a URL segment plus a dictionary lookup. This file owns the
+ * locale list, the UI chrome strings, and the localize/pick fallback helpers. */
 export const LOCALES = ["pt", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "pt";
@@ -17,22 +9,14 @@ export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
 }
 
-/**
- * A bilingual value from the content datasets: PT is required, EN optional.
- * `localize` returns EN when present, otherwise falls back to PT — this is what
- * lets us ship the EN route today and fill EN copy incrementally.
- */
+/** EN when present, otherwise PT — lets EN copy land incrementally. */
 export function localize(locale: Locale, value: { pt: string; en?: string }): string {
   return locale === "en" ? value.en ?? value.pt : value.pt;
 }
 
-/**
- * Same idea as `localize`, but for datasets that store their two languages as
- * separate `*Pt` / `*En` fields (species, stats, sections) rather than a nested
- * `{ pt, en }` object. Returns EN when present, otherwise falls back to PT.
- */
+/** `localize` for datasets that store languages as separate `*Pt`/`*En` fields. */
 export function pick(locale: Locale, pt: string, en?: string): string {
-  return locale === "en" ? en ?? pt : pt;
+  return localize(locale, { pt, en });
 }
 
 /** UI chrome strings — short, safe to translate now (not cited content). */

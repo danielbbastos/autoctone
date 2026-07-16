@@ -1,21 +1,18 @@
 import type { MetadataRoute } from "next";
+import { DEFAULT_LOCALE } from "@/lib/i18n";
+import { SITE_NAME, SITE_COPY, THEME_COLOR } from "@/lib/site";
 
-/**
- * Web app manifest (PWA metadata: home-screen name, icons, colours).
- *
- * Concept demonstrated: Next's metadata file conventions — `manifest.ts` in the
- * app root is a special route handler that serves `/manifest.webmanifest` and
- * links it from <head>, same family as the favicon/icon/apple-icon files that
- * sit next to it and the per-locale `opengraph-image.tsx`.
- */
+/** Served at /manifest.webmanifest and linked from <head> automatically —
+ * Next's metadata file convention, same family as favicon/icon/apple-icon.
+ * One manifest for the whole site, so it carries the default locale's copy. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Autóctone — a floresta que resiste ao fogo",
-    short_name: "Autóctone",
+    name: SITE_COPY[DEFAULT_LOCALE].title,
+    short_name: SITE_NAME,
     start_url: "/",
     display: "standalone",
-    background_color: "#022c22", // emerald-950, matches themeColor in layout.tsx
-    theme_color: "#022c22",
+    background_color: THEME_COLOR,
+    theme_color: THEME_COLOR,
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icon-512.png", sizes: "512x512", type: "image/png" },

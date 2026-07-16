@@ -1,12 +1,5 @@
-/**
- * Proxy (Next 16's renamed `middleware`). Runs before routing and redirects any
- * locale-less path to a localized one, e.g. `/` → `/pt`.
- *
- * Concept demonstrated: locale negotiation at the edge. We read `Accept-Language`
- * and pick a supported locale, defaulting to PT. Detection is hand-rolled to
- * avoid extra dependencies (the docs suggest `negotiator` + `intl-localematcher`;
- * this project's rule is no new deps).
- */
+/* Proxy (Next 16's renamed middleware): redirects locale-less paths using
+ * Accept-Language. Detection is hand-rolled — project rule: no new deps. */
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { LOCALES, DEFAULT_LOCALE, isLocale } from "@/lib/i18n";
