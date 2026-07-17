@@ -353,7 +353,7 @@ html {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
-/* Permanent backdrop — carries no reveal-*/restore-* class, so the parting
+/* Permanent backdrop — carries no reveal-/restore- class, so the parting
  * animation never touches it and the centre stays wooded. */
 .forest-backdrop {
   z-index: 3;
