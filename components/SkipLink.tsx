@@ -1,6 +1,6 @@
-/* Reveal keys off `focus-visible`, not `focus`: the App Router focuses the page
- * top after client-side navigation, and plain :focus would flash the link on
- * every locale switch. */
+/* Reveal keys off `focus-visible`, not `focus`. Safari also applies
+ * :focus-visible to programmatic focus, so `appNewScrollHandler` in
+ * next.config.ts keeps the router from focusing this link after navigation. */
 export function SkipLink({ label }: { label: string }) {
   return (
     <a
