@@ -10,8 +10,10 @@ import { SITE_NAME, SITE_COPY, THEME_COLOR } from "@/lib/site";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-// Base URL for absolute OG/canonical links; override per environment at deploy.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+// Base URL for absolute OG/canonical links; NEXT_PUBLIC_SITE_URL overrides
+// for previews/staging. Baked in at build time (pages are SSG).
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://floresta-autoctone.pt";
 
 export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
