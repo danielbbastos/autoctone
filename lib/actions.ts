@@ -1,6 +1,7 @@
-/* The closing call-to-action. Every action either points at an organization
- * already in ORGANIZATIONS or at a source already in SOURCES — links live in
- * exactly one place, so a moved URL is a one-line fix. */
+/* The closing call-to-action. Most actions link through an organization in
+ * ORGANIZATIONS or a source in SOURCES, so a moved URL is a one-line fix there.
+ * A few point somewhere the citation doesn't — a reserve's own site, a report
+ * page — and carry that `href` inline. */
 import { ORGANIZATIONS, type OrgSlug } from "./organizations";
 import { getSource } from "./sources";
 import type { ActionGroup } from "./types";
@@ -52,7 +53,8 @@ export const ACTION_GROUPS = [
         slug: "faia-brava",
         labelPt: "Visitar e apoiar a Faia Brava",
         labelEn: "Visit and support Faia Brava",
-        href: orgSite("atn"),
+        // The reserve's own site, not ATN's (which the resistance list links).
+        href: "https://www.faiabrava.com/",
         claim: {
           pt:
             "A ATN gere a Reserva da Faia Brava, a primeira área protegida privada do país — visitas e " +
@@ -78,7 +80,6 @@ export const ACTION_GROUPS = [
         slug: "nao-arrendar",
         labelPt: "Pensar duas vezes antes de arrendar a eucaliptal",
         labelEn: "Think twice before leasing for eucalyptus",
-        href: orgSite("navigator"),
         claim: {
           pt:
             "Os programas de arrendamento florestal garantem uma renda estável por décadas, mas fixam o " +
@@ -201,7 +202,7 @@ export const ACTION_GROUPS = [
         slug: "denunciar",
         labelPt: "Comunicar plantações irregulares ao ICNF",
         labelEn: "Report irregular plantings to ICNF",
-        href: getSource("ifn6").url,
+        href: "https://www.icnf.pt/",
         claim: {
           pt:
             "As ações de arborização e rearborização estão sujeitas a autorização do ICNF, o que torna " +
@@ -225,7 +226,9 @@ export const ACTION_GROUPS = [
         slug: "ifn6",
         labelPt: "Inventário Florestal Nacional (IFN6)",
         labelEn: "National Forest Inventory (IFN6)",
-        href: getSource("ifn6").url,
+        // Government announcement of IFN6's completion, not the ICNF inventory
+        // landing page (which the citation footnote still points to).
+        href: "https://portugal.gov.pt/gc21/comunicacao/comunicados/6-inventario-florestal-nacional-esta-concluido",
         claim: {
           pt:
             "O levantamento oficial do que cresce em Portugal e em que área — a base de quase todos os " +

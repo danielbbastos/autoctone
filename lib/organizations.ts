@@ -145,7 +145,7 @@ export const ORGANIZATIONS = [
     name: "Montis — Associação de Conservação da Natureza",
     kind: "ngo",
     side: "resists",
-    site: "https://www.montis.pt",
+    site: "https://montisacn.com/a-montis/",
     claim: {
       pt:
         "A Montis pratica custódia do território: adquire ou gere terrenos abandonados para recuperar " +

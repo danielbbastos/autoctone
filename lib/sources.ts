@@ -36,7 +36,7 @@ export const SOURCES = {
   apcor: {
     short: "APCOR",
     source: "APCOR — Associação Portuguesa da Cortiça",
-    url: "https://www.apcor.pt",
+    url: "https://apcor.pt/",
   },
   navigator: {
     short: "Navigator",
@@ -99,7 +99,7 @@ export const SOURCES = {
   montis: {
     short: "Montis",
     source: "Montis — Associação de Conservação da Natureza",
-    url: "https://www.montis.pt",
+    url: "https://montisacn.com/a-montis/",
   },
   atn: {
     short: "ATN",
