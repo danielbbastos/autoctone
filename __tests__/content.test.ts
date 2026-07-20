@@ -7,6 +7,8 @@ import { describe, expect, it } from "vitest";
 import { ORGANIZATIONS } from "@/lib/organizations";
 import { SPECIES } from "@/lib/species";
 import { SECTIONS, STATS } from "@/lib/narrative";
+import { ACTION_GROUPS } from "@/lib/actions";
+import { FOREST_SHARES, plantedShare } from "@/lib/comparison";
 import { SOURCES, SOURCE_ORDER, sourceNumber } from "@/lib/sources";
 import type { SourceRef } from "@/lib/sources";
 
@@ -34,6 +36,10 @@ function allCitations(): Citation[] {
     ...SECTIONS.flatMap((sec) =>
       sec.body.map((claim, i): Citation => [`section:${sec.id}:body${i}`, claim.sources]),
     ),
+    ...ACTION_GROUPS.flatMap((g) =>
+      g.actions.map((a): Citation => [`action:${g.slug}:${a.slug}`, a.claim.sources]),
+    ),
+    ...FOREST_SHARES.map((s): Citation => [`forestShare:${s.code}`, s.sources]),
   ];
 }
 
@@ -51,8 +57,38 @@ describe("dataset slugs and ids", () => {
     ["organizations", ORGANIZATIONS.map((o) => o.slug)],
     ["stats", STATS.map((s) => s.slug)],
     ["sections", SECTIONS.map((s) => s.id)],
+    ["action groups", ACTION_GROUPS.map((g) => g.slug)],
+    ["actions", ACTION_GROUPS.flatMap((g) => g.actions.map((a) => `${g.slug}/${a.slug}`))],
+    ["forest shares", FOREST_SHARES.map((s) => s.code)],
   ])("%s are unique (React keys / DOM anchors)", (_name, slugs) => {
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+describe("international comparison", () => {
+  /* The bars render `plantedShare`, so if these drift from the cited hectares
+   * the chart is lying about a sourced figure. Expected values are the ones
+   * quoted in the section copy — change copy and data together or fail here. */
+  it.each([
+    ["PRT", 68.1],
+    ["ESP", 13.9],
+    ["ITA", 6.7],
+    ["GRC", 3.6],
+  ])("%s planted share matches the cited hectares", (code, expected) => {
+    const share = FOREST_SHARES.find((s) => s.code === code)!;
+    expect(plantedShare(share)).toBeCloseTo(expected, 1);
+  });
+
+  it("planted area never exceeds total forest area", () => {
+    for (const share of FOREST_SHARES) {
+      expect(share.plantedKha, share.code).toBeLessThanOrEqual(share.totalKha);
+    }
+  });
+
+  it("Portugal is the outlier the copy claims it is", () => {
+    const others = FOREST_SHARES.filter((s) => s.code !== "PRT").map(plantedShare);
+    const portugal = plantedShare(FOREST_SHARES.find((s) => s.code === "PRT")!);
+    expect(portugal).toBeGreaterThan(Math.max(...others) * 2);
   });
 });
 

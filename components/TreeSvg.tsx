@@ -1,6 +1,7 @@
 /* Inline SVG tree per species, drawn in `currentColor` so the parent sets the
  * hue with a text-* class. Crown/trunk keep addressable ids for animation. */
-import type { SpeciesSlug } from "@/lib/species";
+import { getSpecies, type SpeciesSlug } from "@/lib/species";
+import { pick, type Locale } from "@/lib/i18n";
 
 type TreeShape = "cork-oak" | "holm-oak" | "oak" | "shrub" | "riparian" | "eucalyptus";
 
@@ -14,24 +15,64 @@ const SHAPE_BY_SLUG: Record<SpeciesSlug, TreeShape> = {
   eucalipto: "eucalyptus",
 };
 
+/* What the silhouette actually shows. The card already prints the species name,
+ * so labelling the drawing with the name alone would just repeat it — the shape
+ * is the part a screen reader would otherwise lose. */
+const SHAPE_DESCRIPTION: Record<TreeShape, { pt: string; en: string }> = {
+  "cork-oak": {
+    pt: "copa larga e arredondada sobre um tronco espesso, com a base descortiçada a vermelho",
+    en: "a broad rounded crown over a thick trunk, its lower bark stripped to red cork",
+  },
+  "holm-oak": {
+    pt: "copa densa e compacta, mais escura e baixa que a do sobreiro",
+    en: "a dense, compact crown, darker and lower than the cork oak's",
+  },
+  oak: {
+    pt: "copa ampla e ramificada, de folha caduca",
+    en: "a wide, branching, deciduous crown",
+  },
+  shrub: {
+    pt: "arbusto baixo e denso, de vários troncos finos",
+    en: "a low, dense shrub with several thin stems",
+  },
+  riparian: {
+    pt: "árvores esguias inclinadas sobre a linha de água",
+    en: "slender trees leaning over a watercourse",
+  },
+  eucalyptus: {
+    pt: "tronco alto, direito e nu, com a copa estreita empurrada para o topo",
+    en: "a tall, straight, bare trunk with a narrow crown pushed to the top",
+  },
+};
+
 type TreeSvgProps = {
   slug: SpeciesSlug;
+  locale: Locale;
   className?: string;
 };
 
-export function TreeSvg({ slug, className }: TreeSvgProps) {
+export function TreeSvg({ slug, locale, className }: TreeSvgProps) {
   const shape = SHAPE_BY_SLUG[slug];
+  const species = getSpecies(slug);
   const crownId = `${slug}-crown`;
   const trunkId = `${slug}-trunk`;
+
+  const description = SHAPE_DESCRIPTION[shape];
+  const label = `${pick(locale, species.namePt, species.nameEn)}: ${pick(
+    locale,
+    description.pt,
+    description.en,
+  )}`;
 
   return (
     <svg
       viewBox="0 0 80 120"
       role="img"
-      aria-label={`Ilustração de ${slug}`}
+      aria-label={label}
       className={className}
       fill="currentColor"
     >
+      <title>{label}</title>
       {SHAPES[shape](crownId, trunkId)}
     </svg>
   );

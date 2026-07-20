@@ -1,34 +1,6 @@
 /* Shared forest artwork for the reveal/restore scenes: tree images placed
  * across depth layers that slide different distances on scroll (--slide in
  * globals.css) — near travels furthest, which is what sells the parallax. */
-export function ForestDefs() {
-  return (
-    <svg width="0" height="0" aria-hidden className="absolute">
-      <defs>
-        <radialGradient id="fol-euc" cx="0.4" cy="0.3" r="0.85">
-          <stop offset="0" stopColor="#c7d4c2" />
-          <stop offset="1" stopColor="#5a7b60" />
-        </radialGradient>
-        <linearGradient id="bark-pale" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#f5f5f4" />
-          <stop offset="1" stopColor="#6b7280" />
-        </linearGradient>
-        <linearGradient id="char" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#3a3a3a" />
-          <stop offset="1" stopColor="#0c0a09" />
-        </linearGradient>
-        <linearGradient id="flame-outer" x1="0" y1="1" x2="0" y2="0">
-          <stop offset="0" stopColor="#b91c1c" />
-          <stop offset="1" stopColor="#f97316" />
-        </linearGradient>
-        <linearGradient id="flame-inner" x1="0" y1="1" x2="0" y2="0">
-          <stop offset="0" stopColor="#f97316" />
-          <stop offset="1" stopColor="#fde047" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
 
 /** Shared atmosphere (mist, shafts, ground, motes) — all styling in globals.css. */
 export function ForestAtmosphere() {
@@ -47,6 +19,44 @@ export function ForestAtmosphere() {
         <span />
       </div>
     </>
+  );
+}
+
+/* Embers generated with index math — deterministic, so SSR and client render
+ * the same markup (Math.random() here would be a hydration mismatch). The flight
+ * loop is time-based, not scroll-driven, so this drops into any scene. */
+const EMBER_COUNT = 22;
+const EMBERS = Array.from({ length: EMBER_COUNT }, (_, i) => ({
+  left: (i * 100) / (EMBER_COUNT - 1) + (((i * 13) % 7) - 3),
+  bottom: 14 + ((i * 23) % 54),
+  size: 0.3 + ((i * 11) % 4) * 0.1,
+  red: i % 3 === 2,
+  delay: -((i * 1.7) % 8),
+  duration: 6 + ((i * 5) % 9) * 0.5,
+}));
+
+/** Drifting embers. `className` lets a scene add its own positioning/z-index. */
+export function EmberField({ className }: { className?: string }) {
+  return (
+    <div className={`forest-embers ${className ?? ""}`} aria-hidden>
+      {EMBERS.map((e, i) => (
+        <span
+          key={i}
+          style={{
+            left: `${e.left}%`,
+            bottom: `${e.bottom}%`,
+            width: `calc(${e.size} * var(--fu, 1vh))`,
+            height: `calc(${e.size} * var(--fu, 1vh))`,
+            background: e.red ? "#f87171" : "#fdba74",
+            boxShadow: e.red
+              ? "0 0 5px 2px rgba(220, 38, 38, 0.6)"
+              : "0 0 6px 2px rgba(249, 115, 22, 0.65)",
+            animationDelay: `${e.delay}s`,
+            animationDuration: `${e.duration}s`,
+          }}
+        />
+      ))}
+    </div>
   );
 }
 

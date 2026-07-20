@@ -37,6 +37,20 @@ const DICTIONARY = {
       "Pelo meio da escassa vegetação nativa já se vê a paisagem habitual, um eucaliptal em chamas.",
     forestRestoreCaption:
       "Onde os eucaliptos deixaram a sua marca, aos poucos a ferida vai sarando com floresta autóctone.",
+    plantedShareTitle: "Floresta plantada, não nascida",
+    plantedShareCaveat:
+      "«Plantada» quer dizer posta lá por pessoas — não quer dizer exótica. Boa parte do valor português é pinheiro-bravo, que é nativo. O que estes números mostram não é que a floresta é estrangeira, é que quase não há floresta que se tenha feito sozinha.",
+    country: "País",
+    plantedShareColumn: "Floresta plantada",
+    forestAreaColumn: "Área florestal total",
+    shareTitle: "Passa a palavra",
+    shareIntro: "Partilhar é a ação mais barata desta lista.",
+    shareGeneric: "Partilhar",
+    shareCopyLink: "Copiar ligação",
+    shareCopied: "Ligação copiada",
+    lastUpdated: "Última atualização",
+    madeBy: "Feito por",
+    sectionProgress: "Secção",
     fireBehaviour: {
       resists: "Resiste ao fogo",
       resprouts: "Rebenta após o fogo",
@@ -60,6 +74,20 @@ const DICTIONARY = {
       "Through the thin native vegetation, the familiar landscape shows through: a eucalyptus plantation in flames.",
     forestRestoreCaption:
       "Where the eucalyptus left its mark, the wound slowly heals over with native forest.",
+    plantedShareTitle: "Forest planted, not grown",
+    plantedShareCaveat:
+      "\"Planted\" means put there by people — it does not mean exotic. Much of the Portuguese figure is maritime pine, which is native. What these numbers show is not that the forest is foreign, but that almost none of it made itself.",
+    country: "Country",
+    plantedShareColumn: "Planted forest",
+    forestAreaColumn: "Total forest area",
+    shareTitle: "Pass it on",
+    shareIntro: "Sharing is the cheapest action on this list.",
+    shareGeneric: "Share",
+    shareCopyLink: "Copy link",
+    shareCopied: "Link copied",
+    lastUpdated: "Last updated",
+    madeBy: "Made by",
+    sectionProgress: "Section",
     fireBehaviour: {
       resists: "Fire-resistant",
       resprouts: "Resprouts after fire",

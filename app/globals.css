@@ -81,22 +81,6 @@ body {
   mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.55));
 }
 
-/* Stepped scrolling. The 300vh scenes are oversized snap areas — taller than
- * the viewport — so the browser still lets you scroll through them. Phones get
- * `proximity`: mandatory snap + URL-bar resize fights the user's thumb. */
-html {
-  scroll-snap-type: y proximity;
-}
-@media (min-width: 768px) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
-}
-.forest-reveal,
-.forest-restore {
-  scroll-snap-align: start;
-}
-
 /* Canopy photo pinned behind the narrative steps: sticky, removed from flow by
  * the negative margin so sections overlay it. */
 .narrative-region {
@@ -198,6 +182,301 @@ html {
   opacity: 0.7;
 }
 
+/* ── Scene seam ────────────────────────────────────────────────────────────
+ * Softens the boundary where one full-bleed scene meets the next. The strip
+ * straddles *upward* out of the incoming section, so it lies over the outgoing
+ * one and dissolves it: `backdrop-filter` blurs whatever is behind, while the
+ * mask fades both that blur and the seam colour to nothing at the top edge.
+ *
+ * Between two scenes of the same colour (invasão → ciclo, both black) it is
+ * invisible by design — kept for consistency as the scenes' art changes. */
+.scene-seam::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: var(--seam-height, 18vh);
+  transform: translateY(-100%);
+  z-index: 1;
+  pointer-events: none;
+  background: var(--seam-color, #000);
+  -webkit-backdrop-filter: blur(18px); /* Safari still needs the prefix */
+  backdrop-filter: blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+  mask-image: linear-gradient(to bottom, transparent, black);
+}
+
+/* ── Invasão pinned scene ──────────────────────────────────────────────────
+ * The tall section is the view-timeline subject; the sticky stage pins for
+ * exactly the `contain` range (contain 0% = pinned, contain 100% = unpinning),
+ * so block ranges below read as "% of the time pinned on screen" — no
+ * cover-offset math like the forest scenes need. */
+.invasao-scene {
+  height: 620vh; /* ↑ more = slower stages, longer time pinned */
+  view-timeline-name: --invasao;
+  view-timeline-axis: block;
+}
+.invasao-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  isolation: isolate; /* keeps the backdrop below this stage's own content only */
+  background: #000; /* the invasion plays out in the dark; only embers move */
+}
+
+@keyframes inv-slide-in-left {
+  from {
+    transform: translateX(-55vw);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes inv-unveil {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ── Staged narrative scene ────────────────────────────────────────────────
+ * Opt-in via NarrativeSection's `staged` prop. The tall outer section exists
+ * only to supply scroll; the sticky stage is what the reader sees. It opens on
+ * the photo under a black curtain with the title optically centred, then the
+ * title rises into place and the remaining blocks resolve out of blur.
+ *
+ * The content block must fit inside the pinned viewport — a sticky stage can't
+ * scroll, so anything past 100vh would simply never be seen. */
+.staged-scene {
+  height: 320vh; /* ↑ more = slower staging, longer time pinned */
+  view-timeline-name: --staged;
+  view-timeline-axis: block;
+}
+.staged-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  isolation: isolate;
+}
+.staged-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, rgb(2 44 34 / 0.82), rgb(2 44 34 / 0.62)),
+    url("/burnt-forest.jpg") center / cover no-repeat;
+}
+/* Black curtain over the photo — same z-index as ::before, so pseudo order
+ * paints it above the image but still under the copy. Base state is
+ * transparent: with reduced motion or no timeline support a black box would be
+ * the wrong fallback, so the opaque end comes only from the `both` fill. */
+.staged-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Title starts optically centred in the stage and settles into its layout slot.
+ * 28vh is measured, not guessed: the content block is ~630px tall and centred,
+ * which leaves the title's own centre ~220px above the viewport's. */
+@keyframes staged-title-rise {
+  from {
+    transform: translateY(28vh);
+  }
+  to {
+    transform: none;
+  }
+}
+/* Out-of-focus into focus — the blur is what makes this read as "developing"
+ * rather than a plain fade. */
+@keyframes staged-focus {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+/* Same resolve for the ghost numeral, which lives at 0.1 opacity — reusing
+ * `staged-focus` would land it at full strength. */
+@keyframes staged-focus-ghost {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+  to {
+    opacity: 0.1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* The photo arrives late on purpose: the copy resolves against black and
+     * the burnt forest is only fully uncovered four-fifths through the pin. */
+    .staged-stage::after {
+      animation: inv-unveil linear both;
+      animation-timeline: --staged;
+      animation-range: contain 0% contain 80%;
+    }
+    /* The scene opens on the title alone, so the ghost numeral resolves in with
+     * the kicker rather than sitting there over the black. */
+    .staged-scene .section-index::before {
+      animation: staged-focus-ghost linear both;
+      animation-timeline: --staged;
+      animation-range: contain 26% contain 34%;
+    }
+    /* One shared window shifted per sibling by --i, set from nth-child so the
+     * cascade owns the ordering and the component keeps no index bookkeeping.
+     * The 8% window is narrower than the 10% step, so each block finishes and
+     * holds before the next begins — strictly one at a time, never two blurs at
+     * once. (The i=1 slot is the title, which animates separately below, so its
+     * 10% gap is intentional dead air after the kicker.) */
+    .staged-scene .section-index > * {
+      --i: 0;
+      animation: staged-focus linear both;
+      animation-timeline: --staged;
+      animation-range: contain calc(26% + var(--i) * 10%) contain calc(34% + var(--i) * 10%);
+    }
+    .staged-scene .section-index > *:nth-child(2) {
+      --i: 1;
+    }
+    .staged-scene .section-index > *:nth-child(3) {
+      --i: 2;
+    }
+    .staged-scene .section-index > *:nth-child(4) {
+      --i: 3;
+    }
+    .staged-scene .section-index > *:nth-child(5) {
+      --i: 4;
+    }
+    .staged-scene .section-index > *:nth-child(6) {
+      --i: 5;
+    }
+    .staged-scene .section-index > *:nth-child(7) {
+      --i: 6;
+    }
+    .staged-scene .section-index > *:nth-child(8) {
+      --i: 7;
+    }
+    /* The title opts out of the blur ladder entirely: replacing both the name
+     * and the range leaves it sharp from the start, only moving. */
+    .staged-scene .staged-title {
+      animation-name: staged-title-rise;
+      animation-range: contain 0% contain 24%;
+    }
+  }
+}
+@keyframes inv-rise {
+  from {
+    transform: translateY(2.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+/* One comparison's life: in from the left, hold a beat under the stat, then
+ * out to the right. The 30–70% plateau IS the beat — it reads as a pause even
+ * though the animation is scrub-driven, because nothing moves across it. */
+@keyframes inv-compare-cycle {
+  0% {
+    transform: translateX(-65vw);
+    opacity: 0;
+  }
+  25% {
+    transform: none;
+    opacity: 1;
+  }
+  75% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(65vw);
+    opacity: 0;
+  }
+}
+/* The last comparison holds instead of exiting, so the scene never ends empty. */
+@keyframes inv-compare-hold {
+  0% {
+    transform: translateX(-65vw);
+    opacity: 0;
+  }
+  25%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Base state (reduced motion / unsupported) is the full static layout; the
+ * staging below is pure enhancement. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Starts at contain 0% — the instant the stage finishes pinning — so the
+     * first scroll after the section lands moves it. Any lead-in here reads as
+     * unresponsiveness, because the section is already still on screen. */
+    .inv-aside {
+      animation: inv-slide-in-left linear both;
+      animation-timeline: --invasao;
+      animation-range: contain 0% contain 12%;
+    }
+    .inv-quote {
+      animation: inv-rise linear both;
+      animation-timeline: --invasao;
+      animation-range: contain 18% contain 30%;
+    }
+    .inv-stat {
+      animation: inv-rise linear both;
+      animation-timeline: --invasao;
+      animation-range: contain 36% contain 46%;
+    }
+    /* Stack the comparisons in one grid cell; each owns a slice of the scroll,
+     * overlapping a beat so one exits while the next arrives. */
+    .inv-compare {
+      display: grid;
+    }
+    .inv-compare > * {
+      margin: 0; /* neutralise the fallback's space-y */
+    }
+    .inv-compare-item {
+      grid-area: 1 / 1;
+      animation: inv-compare-cycle linear both;
+      animation-timeline: --invasao;
+    }
+    /* 18% slices with a 4% overlap: the outgoing item is still clearing frame
+     * as the next arrives, so the slot is never empty. Widen these together
+     * with the scene height — the plateau's *length in scroll* is what decides
+     * how long a comparison sits still to be read. */
+    .inv-compare-item:nth-child(1) {
+      animation-range: contain 48% contain 66%;
+    }
+    .inv-compare-item:nth-child(2) {
+      animation-range: contain 62% contain 80%;
+    }
+    .inv-compare-item:nth-child(3) {
+      animation-name: inv-compare-hold;
+      animation-range: contain 76% contain 94%;
+    }
+  }
+}
+
 /* Visible keyboard focus ring across interactive elements. */
 :focus-visible {
   outline: 2px solid #6ee7b7; /* emerald-300 */
@@ -217,10 +496,18 @@ html {
 .forest-reveal {
   view-timeline-name: --reveal;
   view-timeline-axis: block;
+  /* Dead beat at the top of the pin before anything moves: the scroll that
+   * brings the scene in carries momentum past the pin, and without this the
+   * trees drift on that leftover inertia instead of on real input. Inherits
+   * down to every animated child, so all of them wait together. */
+  --lead-in: 8%; /* ↑ more = longer wait before the first tree moves */
 }
 .forest-restore {
   view-timeline-name: --restore;
   view-timeline-axis: block;
+  /* Emerald rather than the default black: this seam blends down out of the
+   * narrative copy, not out of one of the dark scenes. */
+  --seam-color: #022c22;
 }
 
 /* `--fu` (forest unit): 1vh on wide screens; on narrow phones 1.5vw wins, so
@@ -261,6 +548,8 @@ html {
   background-image: url("/fire-forest.jpg");
   background-size: cover;
   background-position: center bottom;
+  /* Same anchor as the trees, so the push-in grows from the ground line. */
+  transform-origin: 50% 100%;
 }
 
 /* Smoke haze between fire backdrop and trees; scroll thins it. Base opacity is
@@ -316,6 +605,27 @@ html {
   }
   to {
     opacity: 0;
+  }
+}
+
+/* Exit drag: the stage falls behind the page as it leaves, so the incoming
+ * black overtakes it instead of the two sliding as one rigid strip. */
+@keyframes reveal-lag {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(30vh); /* ↑ more = stronger drag (0 = no parallax) */
+  }
+}
+
+/* Slow push-in on the fire backdrop as the forest parts. */
+@keyframes bg-push-in {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.2; /* ← how far the background swells (1.2 = +20%) */
   }
 }
 
@@ -480,11 +790,45 @@ html {
 }
 
 /* `scale` is the independent property — it composes with translateX instead of
- * overwriting it, so layers swell while sliding without wrapper elements. */
-@keyframes forest-part {
+ * overwriting it, so layers swell while sliding without wrapper elements.
+ *
+ * The two reveal keyframes are mirrors: where `lead` sprints, `follow` crawls
+ * and vice versa, so the sides trade the lead instead of gliding at a matched
+ * pace. The rhythm lives in the *spacing* of the position stops, which is why
+ * these run `linear` — an easing function would fight it. `scale` is declared
+ * only at the ends, so it interpolates smoothly straight through the phases. */
+@keyframes forest-part-lead {
   from {
     transform: translateX(0);
     scale: 1;
+  }
+  25% {
+    transform: translateX(calc(var(--slide) * 0.35));
+  }
+  50% {
+    transform: translateX(calc(var(--slide) * 0.5));
+  }
+  75% {
+    transform: translateX(calc(var(--slide) * 0.85));
+  }
+  to {
+    transform: translateX(var(--slide));
+    scale: var(--zoom, 1);
+  }
+}
+@keyframes forest-part-follow {
+  from {
+    transform: translateX(0);
+    scale: 1;
+  }
+  25% {
+    transform: translateX(calc(var(--slide) * 0.15));
+  }
+  50% {
+    transform: translateX(calc(var(--slide) * 0.5));
+  }
+  75% {
+    transform: translateX(calc(var(--slide) * 0.65));
   }
   to {
     transform: translateX(var(--slide));
@@ -505,15 +849,27 @@ html {
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     /* The `animation` shorthand RESETS animation-timeline and animation-range —
-     * both must come after it. Range starts at 28%: the stage pins at 25% of
-     * `cover`, so the front row moves a beat after pinning. */
+     * both must come after it. `contain` spans exactly the pinned period, so
+     * offsets here read as "% of the time pinned". `--stagger` is authored in
+     * `cover` units (restore still uses them) and contain covers half the
+     * scroll here, hence the 2×. The last layer lands at 99%, so the domino
+     * always finishes before the scene unpins. */
     [class*="reveal-left-"],
     [class*="reveal-right-"] {
-      animation: forest-part ease-out both;
+      animation: forest-part-lead linear both;
       animation-timeline: --reveal;
-      animation-range: cover calc(28% + var(--stagger, 0%)) cover
-        calc(54% + var(--stagger, 0%));
+      animation-range: contain
+        calc(var(--lead-in) + 2 * var(--stagger, 0%) + var(--side-lag, 0%))
+        contain
+        calc(var(--lead-in) + 47% + 2 * var(--stagger, 0%) + var(--side-lag, 0%));
       will-change: transform;
+    }
+    /* Right half leads, left trails by half a depth step → the sides alternate
+     * down the stack instead of travelling in lockstep, and run the mirrored
+     * keyframe so they also trade which one is moving faster. */
+    [class*="reveal-left-"] {
+      --side-lag: 4%;
+      animation-name: forest-part-follow;
     }
     [class*="restore-left-"],
     [class*="restore-right-"] {
@@ -527,7 +883,26 @@ html {
     .forest-smoke-haze {
       animation: haze-clear ease-in both;
       animation-timeline: --reveal;
-      animation-range: cover 28% cover 74%;
+      animation-range: contain calc(var(--lead-in)) contain 99%;
+    }
+    .forest-fire-bg {
+      animation: bg-push-in ease-in both;
+      animation-timeline: --reveal;
+      animation-range: contain calc(var(--lead-in)) contain 99%;
+      will-change: transform;
+    }
+
+    /* Parallax handoff into invasão. The stage unpins exactly when the section's
+     * bottom edge reaches the viewport bottom — which is `exit 0%` — so pushing
+     * it *down* across the exit makes it climb away at roughly 0.7× page speed.
+     * Invasão's opaque black arrives at 1.0× and paints later (.narrative-region
+     * follows in DOM order), so it overtakes and covers the lagging forest.
+     * Scoped to .forest-reveal: .forest-restore shares .forest-stage. */
+    .forest-reveal .forest-stage {
+      animation: reveal-lag linear both;
+      animation-timeline: --reveal;
+      animation-range: exit 0% exit 100%;
+      will-change: transform;
     }
   }
 }
@@ -678,7 +1053,7 @@ html {
     .forest-reveal .forest-mist {
       animation: mist-thin ease both;
       animation-timeline: --reveal;
-      animation-range: cover 28% cover 74%;
+      animation-range: contain calc(var(--lead-in)) contain 99%;
     }
     .forest-restore .forest-mist {
       animation: mist-thin ease both;
@@ -712,140 +1087,61 @@ html {
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+/* ── Section nav rail ────────────────────────────────────────────────────── */
 
-/* ── Burning eucalyptus (component currently unrendered — kept for the
- * Pedrógão sequence). Motion opt-in via prefers-reduced-motion; sized in --fu. */
-.euc-holder {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  z-index: 20;
-  height: calc(80 * var(--fu, 1vh));
-  width: calc(44 * var(--fu, 1vh));
+/* Dock-style magnification: the hovered dot doubles and its two neighbours take
+ * part of the lift. `:has()` gives us the "dot before the hovered one" that a
+ * sibling combinator alone can't reach. */
+.section-nav-item {
+  position: relative; /* anchors the absolutely-placed hover label */
 }
-.euc-tree {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 100%;
-  width: auto;
+.section-nav-dot {
+  transition:
+    transform 180ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out;
+  transform-origin: right center;
 }
-.euc-glow {
-  position: absolute;
-  bottom: calc(2 * var(--fu, 1vh));
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(34 * var(--fu, 1vh));
-  height: calc(34 * var(--fu, 1vh));
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(249, 115, 22, 0.55), rgba(249, 115, 22, 0) 70%);
-  filter: blur(6px);
-  z-index: -1;
-}
-.euc-glow-dim {
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.22), rgba(245, 158, 11, 0) 70%);
-}
-.euc-flames {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: calc(36 * var(--fu, 1vh));
-  width: auto;
-  filter: blur(0.6px);
-}
-.flame {
-  transform-origin: 50% 100%;
-}
-.euc-smoke {
-  position: absolute;
-  bottom: calc(34 * var(--fu, 1vh));
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(12 * var(--fu, 1vh));
-  height: calc(30 * var(--fu, 1vh));
-}
-.euc-smoke span {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: calc(6 * var(--fu, 1vh));
-  height: calc(6 * var(--fu, 1vh));
-  border-radius: 50%;
-  background: rgba(140, 140, 140, 0.4);
-  filter: blur(5px);
-  transform: translate(-50%, 0) scale(0.5);
-  opacity: 0;
-}
-
-@keyframes flicker {
-  0%,
-  100% {
-    transform: scaleY(1) scaleX(1);
-  }
-  50% {
-    transform: scaleY(1.12) scaleX(0.93);
-  }
-}
-@keyframes glow-pulse {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes smoke-rise {
-  0% {
-    transform: translate(-50%, 0) scale(0.5);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.4;
-  }
-  100% {
-    transform: translate(-50%, calc(-26 * var(--fu, 1vh))) scale(1.7);
-    opacity: 0;
-  }
-}
-@keyframes ember-pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .flame-a {
-    animation: flicker 900ms ease-in-out infinite;
+  .section-nav-item:hover .section-nav-dot {
+    transform: scale(2);
   }
-  .flame-b {
-    animation: flicker 720ms ease-in-out -200ms infinite;
+  .section-nav-item:hover + .section-nav-item .section-nav-dot,
+  .section-nav-item:has(+ .section-nav-item:hover) .section-nav-dot {
+    transform: scale(1.45);
   }
-  .flame-c {
-    animation: flicker 1040ms ease-in-out -450ms infinite;
-  }
-  .euc-glow {
-    animation: glow-pulse 1600ms ease-in-out infinite;
-  }
-  .euc-smoke span {
-    animation: smoke-rise 3.4s linear infinite;
-  }
-  .euc-smoke span:nth-child(2) {
-    left: 38%;
-    animation-delay: -1.1s;
-  }
-  .euc-smoke span:nth-child(3) {
-    left: 62%;
-    animation-delay: -2.2s;
-  }
-  .euc-ember {
-    animation: ember-pulse 1.8s ease-in-out infinite;
+}
+.section-nav-item:hover .section-nav-dot {
+  background-color: var(--color-cork);
+  border-color: var(--color-cork);
+}
+
+/* The "07 · Title" pill. Hidden by default and revealed on hover/focus of its
+ * own row only — it must not push the rail's layout, hence the absolute box. */
+.section-nav-label {
+  position: absolute;
+  right: 1.5rem;
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1px solid rgb(6 78 59 / 0.6);
+  background-color: rgb(2 44 34 / 0.92);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  color: rgb(209 250 229 / 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0.35rem);
+  transition:
+    opacity 160ms ease-out,
+    transform 160ms ease-out;
+}
+.section-nav-item:hover .section-nav-label,
+.section-nav-item a:focus-visible .section-nav-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-nav-label {
+    transition: none;
   }
 }

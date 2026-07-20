@@ -5,7 +5,16 @@ import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 import { Disclosure } from "./Disclosure";
 
-export function StatBlock({ stat, locale }: { stat: Stat; locale: Locale }) {
+export function StatBlock({
+  stat,
+  locale,
+  hideComparisons = false,
+}: {
+  stat: Stat;
+  locale: Locale;
+  /** For scenes that animate the comparisons themselves (see InvasaoScene). */
+  hideComparisons?: boolean;
+}) {
   const dict = getDictionary(locale);
   return (
     <figure className="border-l-2 border-cork/50 pl-5">
@@ -20,7 +29,7 @@ export function StatBlock({ stat, locale }: { stat: Stat; locale: Locale }) {
       </figcaption>
       <SourceMarks sources={stat.sources} />
 
-      {stat.comparisons ? (
+      {stat.comparisons && !hideComparisons ? (
         <Disclosure label={dict.howMuch}>
           <ul className="max-w-sm space-y-3">
             {stat.comparisons.map((comparison) => (

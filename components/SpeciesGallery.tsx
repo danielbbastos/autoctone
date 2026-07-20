@@ -37,7 +37,7 @@ export function SpeciesGallery({ locale }: { locale: Locale }) {
             style={{ backgroundImage: `url(/species/${species.slug}.jpg)` }}
           />
           <div className="flex items-start justify-between gap-2">
-            <TreeSvg slug={species.slug} className="h-24 w-auto text-emerald-500" />
+            <TreeSvg slug={species.slug} locale={locale} className="h-24 w-auto text-emerald-500" />
             <span
               className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${BADGE_CLASS[species.fireBehaviour]}`}
             >

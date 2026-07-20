@@ -36,7 +36,7 @@ export const SOURCES = {
   apcor: {
     short: "APCOR",
     source: "APCOR — Associação Portuguesa da Cortiça",
-    url: "https://www.apcor.pt",
+    url: "https://apcor.pt/",
   },
   navigator: {
     short: "Navigator",
@@ -99,7 +99,7 @@ export const SOURCES = {
   montis: {
     short: "Montis",
     source: "Montis — Associação de Conservação da Natureza",
-    url: "https://www.montis.pt",
+    url: "https://montisacn.com/a-montis/",
   },
   atn: {
     short: "ATN",
@@ -142,6 +142,19 @@ export const SOURCES = {
     source:
       "APA — gestão de galerias ripícolas / literatura sobre corredores ripários como corta-fogos",
     url: "https://www.apambiente.pt",
+  },
+
+  // ── International comparison ────────────────────────────────────────
+  /* One entry for all four countries: FRA applies a single harmonised
+   * methodology across them, which is the only reason the comparison holds.
+   * Per-country report ids live in each ref's `note`. */
+  fra2020: {
+    short: "FAO FRA 2020",
+    source:
+      "FAO — Global Forest Resources Assessment 2020, relatórios nacionais (Portugal cb0048en, " +
+      "Espanha cb0103es, Itália cb0012en, Grécia ca9999en), Tabela 1b «Forest characteristics»",
+    url: "https://www.fao.org/forest-resources-assessment/past-assessments/fra-2020/country-reports/en",
+    year: 2020,
   },
 } satisfies Record<string, Source>;
 

@@ -16,7 +16,7 @@ export function LandingHero({
   return (
     <section
       id={section.id}
-      className="landing relative isolate flex min-h-screen snap-start flex-col items-center justify-center px-6 text-center"
+      className="landing relative isolate flex min-h-screen flex-col items-center justify-center px-6 text-center"
     >
       <div className="landing-bg" />
       <div className="landing-scrim" />
