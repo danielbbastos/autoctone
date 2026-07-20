@@ -11,7 +11,7 @@ export function ForestRestore({ locale }: { locale: Locale }) {
      * with it means a screen reader gets the description, not a bare landmark. */
     <section
       id="renascer"
-      className="forest-restore"
+      className="forest-restore scene-seam"
       role="img"
       aria-labelledby="renascer-legenda"
     >

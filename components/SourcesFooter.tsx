@@ -43,11 +43,7 @@ export function SourcesFooter({
   return (
     <section
       id="fontes"
-      // `snap-start` + `min-h-screen`: without a snap alignment this trailing
-      // block sits past the last mandatory snap point (the 300vh finale) and
-      // becomes unreachable — the scroll keeps resting on the finale. Making it
-      // a full-height snap panel lets the reader actually land on it.
-      className="flex min-h-screen snap-start flex-col justify-center border-t border-emerald-700/30 bg-emerald-900 px-6 py-16 text-emerald-50 sm:px-12"
+      className="flex min-h-screen flex-col justify-center bg-emerald-900 px-6 py-16 text-emerald-50 sm:px-12"
     >
       <div className="mx-auto w-full max-w-4xl">
         <button

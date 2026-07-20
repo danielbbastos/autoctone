@@ -1,8 +1,9 @@
 /* Fixed dot rail. Client-only because the active dot tracks scroll position via
  * IntersectionObserver; the smooth jump still comes from CSS scroll-behavior.
  *
- * Sections are ~1 viewport tall and snap, so "most visible wins" is stable —
- * a rootMargin band would flicker at snap boundaries instead. */
+ * "Most visible wins" rather than a rootMargin band: the tall pinned scenes and
+ * the ~1 viewport text sections have very different heights, and a fixed band
+ * flips between neighbours at their boundaries. */
 "use client";
 
 import { useEffect, useState } from "react";

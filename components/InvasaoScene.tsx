@@ -30,7 +30,7 @@ export function InvasaoScene({
   return (
     <section
       id={section.id}
-      className="invasao-scene relative border-b border-emerald-700/30"
+      className="invasao-scene scene-seam relative"
     >
       <div className="invasao-stage flex flex-col justify-center px-6 py-16 sm:px-12">
         <EmberField />

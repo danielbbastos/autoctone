@@ -81,22 +81,6 @@ body {
   mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.55));
 }
 
-/* Stepped scrolling. The 300vh scenes are oversized snap areas — taller than
- * the viewport — so the browser still lets you scroll through them. Phones get
- * `proximity`: mandatory snap + URL-bar resize fights the user's thumb. */
-html {
-  scroll-snap-type: y proximity;
-}
-@media (min-width: 768px) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
-}
-.forest-reveal,
-.forest-restore {
-  scroll-snap-align: start;
-}
-
 /* Canopy photo pinned behind the narrative steps: sticky, removed from flow by
  * the negative margin so sections overlay it. */
 .narrative-region {
@@ -198,6 +182,30 @@ html {
   opacity: 0.7;
 }
 
+/* ── Scene seam ────────────────────────────────────────────────────────────
+ * Softens the boundary where one full-bleed scene meets the next. The strip
+ * straddles *upward* out of the incoming section, so it lies over the outgoing
+ * one and dissolves it: `backdrop-filter` blurs whatever is behind, while the
+ * mask fades both that blur and the seam colour to nothing at the top edge.
+ *
+ * Between two scenes of the same colour (invasão → ciclo, both black) it is
+ * invisible by design — kept for consistency as the scenes' art changes. */
+.scene-seam::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: var(--seam-height, 18vh);
+  transform: translateY(-100%);
+  z-index: 1;
+  pointer-events: none;
+  background: var(--seam-color, #000);
+  -webkit-backdrop-filter: blur(18px); /* Safari still needs the prefix */
+  backdrop-filter: blur(18px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+  mask-image: linear-gradient(to bottom, transparent, black);
+}
+
 /* ── Invasão pinned scene ──────────────────────────────────────────────────
  * The tall section is the view-timeline subject; the sticky stage pins for
  * exactly the `contain` range (contain 0% = pinned, contain 100% = unpinning),
@@ -207,7 +215,6 @@ html {
   height: 620vh; /* ↑ more = slower stages, longer time pinned */
   view-timeline-name: --invasao;
   view-timeline-axis: block;
-  scroll-snap-align: start;
 }
 .invasao-stage {
   position: sticky;
@@ -250,7 +257,6 @@ html {
   height: 320vh; /* ↑ more = slower staging, longer time pinned */
   view-timeline-name: --staged;
   view-timeline-axis: block;
-  scroll-snap-align: start;
 }
 .staged-stage {
   position: sticky;
@@ -320,10 +326,12 @@ html {
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
+    /* The photo arrives late on purpose: the copy resolves against black and
+     * the burnt forest is only fully uncovered four-fifths through the pin. */
     .staged-stage::after {
       animation: inv-unveil linear both;
       animation-timeline: --staged;
-      animation-range: contain 0% contain 30%;
+      animation-range: contain 0% contain 80%;
     }
     /* The scene opens on the title alone, so the ghost numeral resolves in with
      * the kicker rather than sitting there over the black. */
@@ -494,6 +502,9 @@ html {
 .forest-restore {
   view-timeline-name: --restore;
   view-timeline-axis: block;
+  /* Emerald rather than the default black: this seam blends down out of the
+   * narrative copy, not out of one of the dark scenes. */
+  --seam-color: #022c22;
 }
 
 /* `--fu` (forest unit): 1vh on wide screens; on narrow phones 1.5vw wins, so
@@ -591,6 +602,17 @@ html {
   }
   to {
     opacity: 0;
+  }
+}
+
+/* Exit drag: the stage falls behind the page as it leaves, so the incoming
+ * black overtakes it instead of the two sliding as one rigid strip. */
+@keyframes reveal-lag {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(30vh); /* ↑ more = stronger drag (0 = no parallax) */
   }
 }
 
@@ -864,6 +886,19 @@ html {
       animation: bg-push-in ease-in both;
       animation-timeline: --reveal;
       animation-range: contain calc(var(--lead-in)) contain 99%;
+      will-change: transform;
+    }
+
+    /* Parallax handoff into invasão. The stage unpins exactly when the section's
+     * bottom edge reaches the viewport bottom — which is `exit 0%` — so pushing
+     * it *down* across the exit makes it climb away at roughly 0.7× page speed.
+     * Invasão's opaque black arrives at 1.0× and paints later (.narrative-region
+     * follows in DOM order), so it overtakes and covers the lagging forest.
+     * Scoped to .forest-reveal: .forest-restore shares .forest-stage. */
+    .forest-reveal .forest-stage {
+      animation: reveal-lag linear both;
+      animation-timeline: --reveal;
+      animation-range: exit 0% exit 100%;
       will-change: transform;
     }
   }

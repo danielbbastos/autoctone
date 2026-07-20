@@ -46,7 +46,7 @@ export function NarrativeSection({
   // Staged scenes move the padding/centring onto the sticky stage; the tall
   // outer section exists only to supply scroll distance.
   const layout = `flex min-h-screen flex-col justify-center px-6 sm:px-12 ${
-    staged ? "py-16" : "py-24"
+    staged ? "py-16" : "py-32"
   }`;
 
   const content = (
@@ -95,9 +95,7 @@ export function NarrativeSection({
   return (
     <section
       id={section.id}
-      className={`relative snap-start snap-always border-b border-emerald-700/30 ${
-        staged ? "staged-scene" : layout
-      }`}
+      className={`relative ${staged ? "staged-scene scene-seam" : layout}`}
     >
       {staged ? <div className={`staged-stage ${layout}`}>{content}</div> : content}
     </section>
