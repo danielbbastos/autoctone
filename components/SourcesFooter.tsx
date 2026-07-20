@@ -3,8 +3,19 @@
  * chip. Listens for the hash, opens, scrolls to and focuses the entry. */
 import { useEffect, useState } from "react";
 import { SOURCE_ORDER, getSource, sourceNumber } from "@/lib/sources";
+import { SITE_AUTHOR, SITE_AUTHOR_URL, SITE_UPDATED } from "@/lib/site";
 
-export function SourcesFooter({ title, intro }: { title: string; intro: string }) {
+export function SourcesFooter({
+  title,
+  intro,
+  updatedLabel,
+  madeByLabel,
+}: {
+  title: string;
+  intro: string;
+  updatedLabel: string;
+  madeByLabel: string;
+}) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -88,6 +99,27 @@ export function SourcesFooter({ title, intro }: { title: string; intro: string }
             );
           })}
         </ol>
+
+        <p className="mt-10 border-t border-emerald-700/30 pt-5 text-xs text-emerald-200/60">
+          {SITE_UPDATED ? (
+            <>
+              {updatedLabel}{" "}
+              <time dateTime={SITE_UPDATED} className="tabular-nums">
+                {SITE_UPDATED}
+              </time>
+              {" · "}
+            </>
+          ) : null}
+          {madeByLabel}{" "}
+          <a
+            href={SITE_AUTHOR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-dotted underline-offset-2 transition hover:text-cork-soft"
+          >
+            {SITE_AUTHOR}
+          </a>
+        </p>
       </div>
     </section>
   );

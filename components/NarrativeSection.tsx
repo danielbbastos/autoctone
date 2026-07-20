@@ -1,14 +1,14 @@
 /* Shared shell for every scroll section. `heading` is configurable so the page
  * keeps a single <h1>; body sources are de-duplicated into one footer row. */
 import type { ReactNode } from "react";
-import type { Section } from "@/lib/narrative";
+import { sectionNumber, type Section } from "@/lib/narrative";
 import type { SourceRef } from "@/lib/types";
 import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
 import { SourceMarks } from "./SourceMarks";
 import { CrossLink } from "./CrossLink";
 
 /** Unique source refs across the section's body, in first-seen order. */
-function collectSources(section: Section): SourceRef[] {
+export function collectSources(section: Section): SourceRef[] {
   const seen = new Set<string>();
   return section.body
     .flatMap((claim) => claim.sources)
@@ -18,35 +18,50 @@ function collectSources(section: Section): SourceRef[] {
 export function NarrativeSection({
   section,
   locale,
+  index,
   heading = "h2",
+  staged = false,
   children,
 }: {
   section: Section;
   locale: Locale;
+  /** 1-based position in SECTIONS; drives the ghost numeral and the kicker. */
+  index: number;
   heading?: "h1" | "h2";
+  /**
+   * Cinematic variant: the section grows tall and pins, opening on the photo
+   * backdrop with the title centred, then the title rises and the rest resolves
+   * out of blur as you scroll. Staging lives in globals.css (".staged-scene").
+   */
+  staged?: boolean;
   children?: ReactNode;
 }) {
   const dict = getDictionary(locale);
   const Heading = heading;
 
+  const number = sectionNumber(index);
   const kicker = pick(locale, section.kicker, section.kickerEn);
-  // Kickers are "06 · O fogo" — the number before the · feeds the ghost numeral.
-  const index = kicker.split("·")[0]?.trim();
   const sources = collectSources(section);
 
-  return (
-    <section
-      id={section.id}
-      className="relative flex min-h-screen snap-start snap-always flex-col justify-center border-b border-emerald-700/30 px-6 py-24 sm:px-12"
-    >
-      <div className="section-index relative z-10 mx-auto w-full max-w-4xl" data-index={index}>
-        <p className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.25em] text-cork">
-          <span aria-hidden className="h-px w-8 bg-cork/60" />
-          {kicker}
-        </p>
-        <Heading className="font-display text-4xl font-semibold leading-[1.05] tracking-tight text-emerald-50 sm:text-6xl">
-          {pick(locale, section.titlePt, section.titleEn)}
-        </Heading>
+  // Staged scenes move the padding/centring onto the sticky stage; the tall
+  // outer section exists only to supply scroll distance.
+  const layout = `flex min-h-screen flex-col justify-center px-6 sm:px-12 ${
+    staged ? "py-16" : "py-24"
+  }`;
+
+  const content = (
+    <div className="section-index relative z-10 mx-auto w-full max-w-4xl" data-index={number}>
+      <p className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.25em] text-cork">
+        <span aria-hidden className="h-px w-8 bg-cork/60" />
+        {number} · {kicker}
+      </p>
+      <Heading
+        className={`font-display text-4xl font-semibold leading-[1.05] tracking-tight text-emerald-50 sm:text-6xl ${
+          staged ? "staged-title" : ""
+        }`}
+      >
+        {pick(locale, section.titlePt, section.titleEn)}
+      </Heading>
 
         {section.body.map((claim, i) => (
           <p
@@ -73,8 +88,18 @@ export function NarrativeSection({
 
         {section.link ? <CrossLink locale={locale} link={section.link} /> : null}
 
-        {children ? <div className="mt-12">{children}</div> : null}
-      </div>
+      {children ? <div className="mt-12">{children}</div> : null}
+    </div>
+  );
+
+  return (
+    <section
+      id={section.id}
+      className={`relative snap-start snap-always border-b border-emerald-700/30 ${
+        staged ? "staged-scene" : layout
+      }`}
+    >
+      {staged ? <div className={`staged-stage ${layout}`}>{content}</div> : content}
     </section>
   );
 }

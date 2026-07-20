@@ -73,6 +73,48 @@ export type OrgFact = {
   sources: SourceRef[];
 };
 
+/**
+ * One thing a reader can actually do. `claim` carries the cited justification;
+ * `href` is where the doing happens, so an action without a link is still
+ * valid copy (e.g. "don't lease your land").
+ */
+export type Action = {
+  slug: string;
+  labelPt: string;
+  labelEn?: string;
+  /** Outbound link — an org site, a law, a register. */
+  href?: string;
+  claim: Claim;
+};
+
+/** A themed cluster of actions in the closing call-to-action section. */
+export type ActionGroup = {
+  slug: string;
+  titlePt: string;
+  titleEn?: string;
+  /** One line framing why this cluster matters. */
+  ledePt: string;
+  ledeEn?: string;
+  actions: Action[];
+};
+
+/**
+ * One country's forest split for the international comparison. Areas are in
+ * 1000 ha as FRA reports them; the rendered percentage is derived, never
+ * stored, so the bar can never drift from the cited hectares.
+ */
+export type ForestShare = {
+  /** ISO 3166-1 alpha-3, doubles as the React key. */
+  code: "PRT" | "ESP" | "ITA" | "GRC";
+  namePt: string;
+  nameEn: string;
+  /** Total forest area, 1000 ha. */
+  totalKha: number;
+  /** Planted forest (FRA category), 1000 ha. Includes native planted stands. */
+  plantedKha: number;
+  sources: SourceRef[];
+};
+
 /** A headline statistic rendered as a big number in the narrative. */
 export type Stat = {
   slug: string;

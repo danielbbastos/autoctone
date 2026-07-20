@@ -7,7 +7,8 @@ import type { Claim, Stat } from "./types";
 export type Section = {
   /** DOM id / anchor / animation target. Matches the README section names. */
   id: string;
-  /** Small overline label, e.g. "01 · A floresta". */
+  /** Small overline label, e.g. "A floresta". The leading number is derived
+   * from array position at render time — never hardcode it here. */
   kicker: string;
   kickerEn?: string;
   /** Section heading, PT-first. */
@@ -24,8 +25,8 @@ export type Section = {
 export const SECTIONS = [
   {
     id: "hero",
-    kicker: "01 · A floresta",
-    kickerEn: "01 · The forest",
+    kicker: "A floresta",
+    kickerEn: "The forest",
     titlePt: "A floresta que resiste ao fogo",
     titleEn: "The forest that resists fire",
     body: [
@@ -53,8 +54,8 @@ export const SECTIONS = [
   },
   {
     id: "invasao",
-    kicker: "02 · A invasão",
-    kickerEn: "02 · The invasion",
+    kicker: "A invasão",
+    kickerEn: "The invasion",
     titlePt: "As nativas saem, o eucalipto entra",
     titleEn: "The natives move out, the eucalyptus moves in",
     body: [
@@ -85,9 +86,149 @@ export const SECTIONS = [
     },
   },
   {
+    id: "ciclo",
+    kicker: "O ciclo",
+    kickerEn: "The cycle",
+    titlePt: "O fogo ajuda o eucalipto a vencer",
+    titleEn: "Fire helps the eucalyptus win",
+    body: [
+      {
+        pt:
+          "O eucalipto rebenta vigorosamente após o fogo e a sua regeneração beneficia da perturbação, " +
+          "criando um ciclo em que arder favorece o próprio eucalipto face às espécies autóctones.",
+        en:
+          "Eucalyptus resprouts vigorously after fire and its regeneration benefits from the disturbance, " +
+          "creating a cycle in which burning favours the eucalyptus itself over native species.",
+        sources: [{ id: "fireEcology" }],
+      },
+      {
+        pt:
+          "Cada incêndio limpa a concorrência e entrega o terreno aos rebentos e às sementes que o calor " +
+          "liberta. Quanto mais arde, mais eucalipto ocupa o espaço — e quanto mais eucalipto, mais depressa " +
+          "e mais longe volta a arder. É um ciclo que se alimenta a si próprio.",
+        en:
+          "Each wildfire clears out the competition and hands the ground to the shoots and to the seeds the " +
+          "heat releases. The more it burns, the more eucalyptus takes over — and the more eucalyptus, the " +
+          "faster and farther it burns again. It is a cycle that feeds itself.",
+        sources: [{ id: "fireEcology" }],
+      },
+    ],
+    pullQuote: {
+      pt: "Quanto mais arde, mais eucalipto. Quanto mais eucalipto, mais arde.",
+      en: "The more it burns, the more eucalyptus. The more eucalyptus, the more it burns.",
+    },
+    link: {
+      pt: "Porque é que isto acontece?",
+      en: "Why does this happen?",
+      to: "#fogo-eucalipto",
+    },
+  },
+  {
+    id: "fogo-eucalipto",
+    kicker: "Fogo e semente",
+    kickerEn: "Fire and seed",
+    titlePt: "Como o eucalipto usa o fogo",
+    titleEn: "How the eucalyptus uses fire",
+    body: [
+      {
+        pt:
+          "O Eucalyptus globulus não só sobrevive ao fogo como o aproveita. A casca fibrosa solta-se em tiras " +
+          "que ardem e voam quilómetros à frente da frente de fogo, abrindo novos focos muito antes de as " +
+          "chamas chegarem — foi este mecanismo que ajudou a alastrar o incêndio de Pedrógão.",
+        en:
+          "Eucalyptus globulus doesn't just survive fire — it puts it to work. Its fibrous bark peels off in " +
+          "strips that burn and fly kilometres ahead of the fire front, starting new ignitions long before " +
+          "the flames arrive — the very mechanism that helped the Pedrógão fire spread.",
+        sources: [
+          { id: "cti2017", note: "Projeção de brasas / focos secundários a longa distância." },
+          { id: "fireEcology" },
+        ],
+      },
+      {
+        pt:
+          "Depois de arder, rebenta com vigor a partir de gomos protegidos sob a casca e de um lenhotúber na " +
+          "base do tronco, enquanto as cápsulas abertas pelo calor libertam sementes sobre um solo limpo de " +
+          "concorrência. Onde a floresta nativa demora anos a voltar, o eucalipto reocupa o terreno numa só estação.",
+        en:
+          "After burning, it resprouts vigorously from buds protected under the bark and from a lignotuber at " +
+          "the base of the trunk, while heat-opened capsules release seeds onto ground cleared of " +
+          "competition. Where the native forest takes years to return, the eucalyptus reclaims the land in a single season.",
+        sources: [{ id: "fireEcology" }],
+      },
+    ],
+    pullQuote: {
+      pt: "O fogo não é o inimigo do eucalipto — é o seu semeador.",
+      en: "Fire is not the eucalyptus's enemy — it is its sower.",
+    },
+  },
+  {
+    id: "lucro",
+    kicker: "Quem lucra",
+    kickerEn: "Who profits",
+    titlePt: "Quem lucra com o eucalipto",
+    titleEn: "Who profits from the eucalyptus",
+    body: [
+      {
+        pt:
+          "A fileira concentra-se em poucos grandes atores — Navigator e Altri na produção de pasta e papel, " +
+          "com a CELPA a representar o setor.",
+        en:
+          "The industry is concentrated in a few big players — Navigator and Altri in pulp and paper " +
+          "production, with CELPA representing the sector.",
+        sources: [{ id: "celpa" }],
+      },
+      {
+        pt:
+          "A pasta e o papel estão entre as maiores exportações industriais portuguesas, e o eucalipto é a " +
+          "matéria-prima dessa fileira. O modelo é rentável para quem transforma — mas o risco de incêndio " +
+          "recai sobre quem vive no meio das plantações.",
+        en:
+          "Pulp and paper rank among Portugal's biggest industrial exports, and eucalyptus is the raw " +
+          "material of that chain. The model is profitable for those who process it — but the fire risk " +
+          "falls on those who live among the plantations.",
+        sources: [{ id: "navigator" }],
+      },
+    ],
+  },
+  {
+    id: "fogo",
+    kicker: "O fogo",
+    kickerEn: "The fire",
+    titlePt: "Pedrógão Grande, junho de 2017",
+    titleEn: "Pedrógão Grande, June 2017",
+    body: [
+      {
+        pt:
+          "A 17 de junho de 2017, um incêndio em Pedrógão Grande matou 66 pessoas, muitas em fuga nas estradas. " +
+          "A projeção de brasas a longa distância — favorecida pela casca do eucalipto — abriu novas frentes " +
+          "à frente das chamas.",
+        en:
+          "On 17 June 2017, a wildfire in Pedrógão Grande killed 66 people, many while fleeing along the roads. " +
+          "Long-distance ember showers — aided by the eucalyptus's bark — opened new fronts ahead of " +
+          "the flames.",
+        sources: [{ id: "cti2017", note: "66 vítimas mortais; projeção de focos secundários." }],
+      },
+      {
+        pt:
+          "Não foi um caso isolado. Em outubro do mesmo ano, uma segunda vaga de incêndios varreu o centro " +
+          "e o norte do país, e 2017 fechou como o ano mais mortífero de que há registo — mais de uma " +
+          "centena de vidas perdidas ao fogo. No meio da destruição, os sobreiros ficaram de pé.",
+        en:
+          "It was not an isolated case. In October of the same year, a second wave of fires swept the centre " +
+          "and north of the country, and 2017 closed as the deadliest year on record — more than a hundred " +
+          "lives lost to fire. Amid the destruction, the cork oaks were left standing.",
+        sources: [{ id: "cti2017", note: "Junho (Pedrógão) 66 mortos; total do ano superior a uma centena." }],
+      },
+    ],
+    pullQuote: {
+      pt: "No meio da destruição, os sobreiros permaneceram de pé.",
+      en: "Amid the destruction, the cork oaks remained standing.",
+    },
+  },
+  {
     id: "porque",
-    kicker: "03 · Porquê?",
-    kickerEn: "03 · Why?",
+    kicker: "Porquê?",
+    kickerEn: "Why?",
     titlePt: "A economia da pasta de papel",
     titleEn: "The pulp economy",
     body: [
@@ -131,8 +272,8 @@ export const SECTIONS = [
   },
   {
     id: "economia-terra",
-    kicker: "04 · A terra",
-    kickerEn: "04 · The land",
+    kicker: "A terra",
+    kickerEn: "The land",
     titlePt: "A conta que não fecha",
     titleEn: "The maths that don't add up",
     body: [
@@ -184,149 +325,9 @@ export const SECTIONS = [
     },
   },
   {
-    id: "lucro",
-    kicker: "05 · Quem lucra",
-    kickerEn: "05 · Who profits",
-    titlePt: "Quem lucra com o eucalipto",
-    titleEn: "Who profits from the eucalyptus",
-    body: [
-      {
-        pt:
-          "A fileira concentra-se em poucos grandes atores — Navigator e Altri na produção de pasta e papel, " +
-          "com a CELPA a representar o setor.",
-        en:
-          "The industry is concentrated in a few big players — Navigator and Altri in pulp and paper " +
-          "production, with CELPA representing the sector.",
-        sources: [{ id: "celpa" }],
-      },
-      {
-        pt:
-          "A pasta e o papel estão entre as maiores exportações industriais portuguesas, e o eucalipto é a " +
-          "matéria-prima dessa fileira. O modelo é rentável para quem transforma — mas o risco de incêndio " +
-          "recai sobre quem vive no meio das plantações.",
-        en:
-          "Pulp and paper rank among Portugal's biggest industrial exports, and eucalyptus is the raw " +
-          "material of that chain. The model is profitable for those who process it — but the fire risk " +
-          "falls on those who live among the plantations.",
-        sources: [{ id: "navigator" }],
-      },
-    ],
-  },
-  {
-    id: "fogo",
-    kicker: "06 · O fogo",
-    kickerEn: "06 · The fire",
-    titlePt: "Pedrógão Grande, junho de 2017",
-    titleEn: "Pedrógão Grande, June 2017",
-    body: [
-      {
-        pt:
-          "A 17 de junho de 2017, um incêndio em Pedrógão Grande matou 66 pessoas, muitas em fuga nas estradas. " +
-          "A projeção de brasas a longa distância — favorecida pela casca do eucalipto — abriu novas frentes " +
-          "à frente das chamas.",
-        en:
-          "On 17 June 2017, a wildfire in Pedrógão Grande killed 66 people, many while fleeing along the roads. " +
-          "Long-distance ember showers — aided by the eucalyptus's bark — opened new fronts ahead of " +
-          "the flames.",
-        sources: [{ id: "cti2017", note: "66 vítimas mortais; projeção de focos secundários." }],
-      },
-      {
-        pt:
-          "Não foi um caso isolado. Em outubro do mesmo ano, uma segunda vaga de incêndios varreu o centro " +
-          "e o norte do país, e 2017 fechou como o ano mais mortífero de que há registo — mais de uma " +
-          "centena de vidas perdidas ao fogo. No meio da destruição, os sobreiros ficaram de pé.",
-        en:
-          "It was not an isolated case. In October of the same year, a second wave of fires swept the centre " +
-          "and north of the country, and 2017 closed as the deadliest year on record — more than a hundred " +
-          "lives lost to fire. Amid the destruction, the cork oaks were left standing.",
-        sources: [{ id: "cti2017", note: "Junho (Pedrógão) 66 mortos; total do ano superior a uma centena." }],
-      },
-    ],
-    pullQuote: {
-      pt: "No meio da destruição, os sobreiros permaneceram de pé.",
-      en: "Amid the destruction, the cork oaks remained standing.",
-    },
-  },
-  {
-    id: "ciclo",
-    kicker: "07 · O ciclo",
-    kickerEn: "07 · The cycle",
-    titlePt: "O fogo ajuda o eucalipto a vencer",
-    titleEn: "Fire helps the eucalyptus win",
-    body: [
-      {
-        pt:
-          "O eucalipto rebenta vigorosamente após o fogo e a sua regeneração beneficia da perturbação, " +
-          "criando um ciclo em que arder favorece o próprio eucalipto face às espécies autóctones.",
-        en:
-          "Eucalyptus resprouts vigorously after fire and its regeneration benefits from the disturbance, " +
-          "creating a cycle in which burning favours the eucalyptus itself over native species.",
-        sources: [{ id: "fireEcology" }],
-      },
-      {
-        pt:
-          "Cada incêndio limpa a concorrência e entrega o terreno aos rebentos e às sementes que o calor " +
-          "liberta. Quanto mais arde, mais eucalipto ocupa o espaço — e quanto mais eucalipto, mais depressa " +
-          "e mais longe volta a arder. É um ciclo que se alimenta a si próprio.",
-        en:
-          "Each wildfire clears out the competition and hands the ground to the shoots and to the seeds the " +
-          "heat releases. The more it burns, the more eucalyptus takes over — and the more eucalyptus, the " +
-          "faster and farther it burns again. It is a cycle that feeds itself.",
-        sources: [{ id: "fireEcology" }],
-      },
-    ],
-    pullQuote: {
-      pt: "Quanto mais arde, mais eucalipto. Quanto mais eucalipto, mais arde.",
-      en: "The more it burns, the more eucalyptus. The more eucalyptus, the more it burns.",
-    },
-    link: {
-      pt: "Porque é que isto acontece?",
-      en: "Why does this happen?",
-      to: "#fogo-eucalipto",
-    },
-  },
-  {
-    id: "fogo-eucalipto",
-    kicker: "08 · Fogo e semente",
-    kickerEn: "08 · Fire and seed",
-    titlePt: "Como o eucalipto usa o fogo",
-    titleEn: "How the eucalyptus uses fire",
-    body: [
-      {
-        pt:
-          "O Eucalyptus globulus não só sobrevive ao fogo como o aproveita. A casca fibrosa solta-se em tiras " +
-          "que ardem e voam quilómetros à frente da frente de fogo, abrindo novos focos muito antes de as " +
-          "chamas chegarem — foi este mecanismo que ajudou a alastrar o incêndio de Pedrógão.",
-        en:
-          "Eucalyptus globulus doesn't just survive fire — it puts it to work. Its fibrous bark peels off in " +
-          "strips that burn and fly kilometres ahead of the fire front, starting new ignitions long before " +
-          "the flames arrive — the very mechanism that helped the Pedrógão fire spread.",
-        sources: [
-          { id: "cti2017", note: "Projeção de brasas / focos secundários a longa distância." },
-          { id: "fireEcology" },
-        ],
-      },
-      {
-        pt:
-          "Depois de arder, rebenta com vigor a partir de gomos protegidos sob a casca e de um lenhotúber na " +
-          "base do tronco, enquanto as cápsulas abertas pelo calor libertam sementes sobre um solo limpo de " +
-          "concorrência. Onde a floresta nativa demora anos a voltar, o eucalipto reocupa o terreno numa só estação.",
-        en:
-          "After burning, it resprouts vigorously from buds protected under the bark and from a lignotuber at " +
-          "the base of the trunk, while heat-opened capsules release seeds onto ground cleared of " +
-          "competition. Where the native forest takes years to return, the eucalyptus reclaims the land in a single season.",
-        sources: [{ id: "fireEcology" }],
-      },
-    ],
-    pullQuote: {
-      pt: "O fogo não é o inimigo do eucalipto — é o seu semeador.",
-      en: "Fire is not the eucalyptus's enemy — it is its sower.",
-    },
-  },
-  {
     id: "galeria",
-    kicker: "09 · As nativas",
-    kickerEn: "09 · The natives",
+    kicker: "As nativas",
+    kickerEn: "The natives",
     titlePt: "As espécies que combatem o fogo",
     titleEn: "The species that fight fire",
     body: [
@@ -343,9 +344,67 @@ export const SECTIONS = [
     ], // cards rendered from SPECIES (see lib/species.ts)
   },
   {
+    id: "vizinhos",
+    kicker: "Os vizinhos",
+    kickerEn: "The neighbours",
+    titlePt: "O mesmo clima, outra floresta",
+    titleEn: "Same climate, different forest",
+    body: [
+      {
+        pt:
+          "Espanha, Itália e Grécia partilham connosco o verão mediterrânico, a seca e o fogo. Não " +
+          "partilham a floresta. Em Portugal, cerca de dois terços da área florestal foi plantada por " +
+          "pessoas; na Grécia é menos de um vigésimo.",
+        en:
+          "Spain, Italy and Greece share our Mediterranean summer, our drought and our fire. They do not " +
+          "share our forest. In Portugal, roughly two thirds of the forest area was planted by people; in " +
+          "Greece it is less than a twentieth.",
+        sources: [
+          {
+            id: "fra2020",
+            note: "Plantado/total 2020: PT 2256/3312 ≈ 68%; ES 2590/18 572 ≈ 14%; IT 645/9566 ≈ 7%; GR 139/3902 ≈ 4%.",
+          },
+        ],
+      },
+      {
+        pt:
+          "A diferença não é climática, é económica. Onde os vizinhos deixaram a floresta regenerar-se, " +
+          "Portugal plantou-a — e plantou-a sobretudo para abastecer fábricas.",
+        en:
+          "The difference is not climatic, it is economic. Where our neighbours let the forest regenerate " +
+          "itself, Portugal planted it — and planted it largely to feed mills.",
+        sources: [{ id: "ifn6" }, { id: "celpa" }],
+      },
+    ],
+  },
+  {
+    id: "pessoas",
+    kicker: "As pessoas",
+    kickerEn: "The people",
+    titlePt: "A floresta é das pessoas",
+    titleEn: "The forest belongs to people",
+    body: [
+      {
+        pt:
+          "Mesmo quem arrenda o seu campo a uma grande empresa sai, no fundo, a perder: recebe pouco em troca " +
+          "de um custo ambiental enorme que só se cobra décadas depois. Vivemos pouco para ver o estrago de " +
+          "perto — mas já estamos a ver o que uma indústria semeada há meio século nos deixou.",
+        en:
+          "Even those who lease their land to a big company come out losing in the end: they get little in " +
+          "return for an enormous environmental cost that only comes due decades later. We live too short to " +
+          "see the damage up close — but we are already seeing what an industry sown half a century ago left us.",
+        sources: [{ id: "navigatorArrendamento" }, { id: "fireEcology" }],
+      },
+    ],
+    pullQuote: {
+      pt: "A floresta é das pessoas, não das empresas.",
+      en: "The forest belongs to people, not to companies.",
+    },
+  },
+  {
     id: "resistencia",
-    kicker: "10 · A resistência",
-    kickerEn: "10 · The resistance",
+    kicker: "A resistência",
+    kickerEn: "The resistance",
     titlePt: "Quem está a lutar",
     titleEn: "Who is fighting back",
     body: [
@@ -364,31 +423,18 @@ export const SECTIONS = [
   },
   {
     id: "acao",
-    kicker: "11 · O que podes fazer",
-    kickerEn: "11 · What you can do",
-    titlePt: "A floresta é das pessoas",
-    titleEn: "The forest belongs to people",
+    kicker: "O que podes fazer",
+    kickerEn: "What you can do",
+    titlePt: "Começa por uma destas",
+    titleEn: "Start with one of these",
     body: [
       {
         pt:
-          "Mesmo quem arrenda o seu campo a uma grande empresa sai, no fundo, a perder: recebe pouco em troca " +
-          "de um custo ambiental enorme que só se cobra décadas depois. Vivemos pouco para ver o estrago de " +
-          "perto — mas já estamos a ver o que uma indústria semeada há meio século nos deixou.",
+          "Plantar autóctones, apoiar associações de conservação e custódia do território, e preferir " +
+          "produtos de floresta nativa — como a cortiça — são formas concretas de inverter a monocultura.",
         en:
-          "Even those who lease their land to a big company come out losing in the end: they get little in " +
-          "return for an enormous environmental cost that only comes due decades later. We live too short to " +
-          "see the damage up close — but we are already seeing what an industry sown half a century ago left us.",
-        sources: [{ id: "navigatorArrendamento" }, { id: "fireEcology" }],
-      },
-      {
-        pt:
-          "A floresta é das pessoas, não das empresas. Plantar autóctones, apoiar associações de conservação e " +
-          "custódia do território, e preferir produtos de floresta nativa — como a cortiça — são formas " +
-          "concretas de inverter a monocultura.",
-        en:
-          "The forest belongs to people, not to companies. Planting native species, supporting conservation " +
-          "and land-stewardship groups, and choosing native-forest products — such as cork — are concrete " +
-          "ways to reverse the monoculture.",
+          "Planting native species, supporting conservation and land-stewardship groups, and choosing " +
+          "native-forest products — such as cork — are concrete ways to reverse the monoculture.",
         sources: [{ id: "montis" }, { id: "plantar" }],
       },
       {
@@ -402,15 +448,18 @@ export const SECTIONS = [
           "that, added together, shift demand. And demand is what, in the end, decides what gets planted.",
         sources: [{ id: "apcor" }],
       },
-    ],
-    pullQuote: {
-      pt: "A floresta é das pessoas, não das empresas.",
-      en: "The forest belongs to people, not to companies.",
-    },
+    ], // action groups rendered from ACTION_GROUPS (see lib/actions.ts)
   },
 ] as const satisfies readonly Section[];
 
 export type SectionId = (typeof SECTIONS)[number]["id"];
+
+/** Display numeral for a 1-based section position ("07"). Single source for the
+ * ghost numeral, the kicker overline and the nav rail, so inserting a section
+ * renumbers everything at once. */
+export function sectionNumber(index: number): string {
+  return String(index).padStart(2, "0");
+}
 
 /**
  * Headline statistics rendered as oversized numbers in the narrative. Kept
@@ -465,17 +514,33 @@ export const STATS = [
   },
   {
     slug: "floresta-privada",
-    value: "≈ 97%",
-    unitPt: "não é do Estado",
-    unitEn: "not state-owned",
+    value: "≈ 91%",
+    unitPt: "é propriedade privada",
+    unitEn: "is privately owned",
     labelPt:
-      "da floresta portuguesa é privada ou comunitária — o Estado gere apenas uma pequena fração",
+      "da floresta portuguesa pertence a proprietários particulares — na maioria minifúndios de poucos hectares, o que torna a gestão do território uma decisão de milhares de famílias",
     labelEn:
-      "of Portuguese forest is private or community-owned — the State manages only a small fraction",
+      "of Portuguese forest belongs to private owners — mostly smallholdings of a few hectares, which makes managing the land a decision taken by thousands of families",
     sources: [
       {
         id: "propriedadeFlorestal",
-        note: "~91% propriedade privada + ~6% baldios comunitários; Estado/ICNF gere uma fração menor.",
+        note: "~91% propriedade privada (excluindo baldios comunitários).",
+      },
+    ],
+  },
+  {
+    slug: "floresta-baldios",
+    value: "≈ 6%",
+    unitPt: "são baldios comunitários",
+    unitEn: "is common land",
+    labelPt:
+      "é gerido em baldio pelas comunidades locais — terra coletiva, não do Estado nem de empresas. O Estado gere apenas a fração restante",
+    labelEn:
+      "is managed as commons by local communities — collective land, owned neither by the State nor by companies. The State manages only the remaining fraction",
+    sources: [
+      {
+        id: "propriedadeFlorestal",
+        note: "~6% baldios comunitários; Estado/ICNF gere a fração restante (~3%).",
       },
     ],
   },

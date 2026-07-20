@@ -50,6 +50,44 @@ export function ForestAtmosphere() {
   );
 }
 
+/* Embers generated with index math — deterministic, so SSR and client render
+ * the same markup (Math.random() here would be a hydration mismatch). The flight
+ * loop is time-based, not scroll-driven, so this drops into any scene. */
+const EMBER_COUNT = 22;
+const EMBERS = Array.from({ length: EMBER_COUNT }, (_, i) => ({
+  left: (i * 100) / (EMBER_COUNT - 1) + (((i * 13) % 7) - 3),
+  bottom: 14 + ((i * 23) % 54),
+  size: 0.3 + ((i * 11) % 4) * 0.1,
+  red: i % 3 === 2,
+  delay: -((i * 1.7) % 8),
+  duration: 6 + ((i * 5) % 9) * 0.5,
+}));
+
+/** Drifting embers. `className` lets a scene add its own positioning/z-index. */
+export function EmberField({ className }: { className?: string }) {
+  return (
+    <div className={`forest-embers ${className ?? ""}`} aria-hidden>
+      {EMBERS.map((e, i) => (
+        <span
+          key={i}
+          style={{
+            left: `${e.left}%`,
+            bottom: `${e.bottom}%`,
+            width: `calc(${e.size} * var(--fu, 1vh))`,
+            height: `calc(${e.size} * var(--fu, 1vh))`,
+            background: e.red ? "#f87171" : "#fdba74",
+            boxShadow: e.red
+              ? "0 0 5px 2px rgba(220, 38, 38, 0.6)"
+              : "0 0 6px 2px rgba(249, 115, 22, 0.65)",
+            animationDelay: `${e.delay}s`,
+            animationDuration: `${e.duration}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 // Casting: 0–2 (oaks) carry the forest; 3 (chestnut) is an accent; 4+5 are the
 // riparian pair and only ever appear side by side — they grow along water.
 const TREE_IMAGES = [
