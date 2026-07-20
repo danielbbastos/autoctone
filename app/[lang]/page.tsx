@@ -16,7 +16,6 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { SITE_COPY, localeUrl } from "@/lib/site";
 import { StatBlock } from "@/components/StatBlock";
 import { LandingHero } from "@/components/LandingHero";
-import { ForestDefs } from "@/components/forest-parts";
 import { ForestReveal } from "@/components/ForestReveal";
 import { ForestRestore } from "@/components/ForestRestore";
 import { SectionNav } from "@/components/SectionNav";
@@ -85,7 +84,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       <BackToTop label={dict.backToTop} />
 
       <main id="conteudo" className="bg-emerald-800 text-emerald-50">
-        <ForestDefs />
         <LandingHero section={heroSection} locale={locale} />
         <ForestReveal locale={locale} />
 

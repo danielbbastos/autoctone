@@ -1,34 +1,6 @@
 /* Shared forest artwork for the reveal/restore scenes: tree images placed
  * across depth layers that slide different distances on scroll (--slide in
  * globals.css) — near travels furthest, which is what sells the parallax. */
-export function ForestDefs() {
-  return (
-    <svg width="0" height="0" aria-hidden className="absolute">
-      <defs>
-        <radialGradient id="fol-euc" cx="0.4" cy="0.3" r="0.85">
-          <stop offset="0" stopColor="#c7d4c2" />
-          <stop offset="1" stopColor="#5a7b60" />
-        </radialGradient>
-        <linearGradient id="bark-pale" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#f5f5f4" />
-          <stop offset="1" stopColor="#6b7280" />
-        </linearGradient>
-        <linearGradient id="char" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#3a3a3a" />
-          <stop offset="1" stopColor="#0c0a09" />
-        </linearGradient>
-        <linearGradient id="flame-outer" x1="0" y1="1" x2="0" y2="0">
-          <stop offset="0" stopColor="#b91c1c" />
-          <stop offset="1" stopColor="#f97316" />
-        </linearGradient>
-        <linearGradient id="flame-inner" x1="0" y1="1" x2="0" y2="0">
-          <stop offset="0" stopColor="#f97316" />
-          <stop offset="1" stopColor="#fde047" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
 
 /** Shared atmosphere (mist, shafts, ground, motes) — all styling in globals.css. */
 export function ForestAtmosphere() {
