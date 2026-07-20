@@ -338,16 +338,19 @@ body {
     .staged-scene .section-index::before {
       animation: staged-focus-ghost linear both;
       animation-timeline: --staged;
-      animation-range: contain 28% contain 46%;
+      animation-range: contain 26% contain 34%;
     }
-    /* One shared range shifted per sibling by --i, the same staggering trick the
-     * forest layers use. Set from nth-child so the cascade owns the ordering and
-     * the component stays free of index bookkeeping. */
+    /* One shared window shifted per sibling by --i, set from nth-child so the
+     * cascade owns the ordering and the component keeps no index bookkeeping.
+     * The 8% window is narrower than the 10% step, so each block finishes and
+     * holds before the next begins — strictly one at a time, never two blurs at
+     * once. (The i=1 slot is the title, which animates separately below, so its
+     * 10% gap is intentional dead air after the kicker.) */
     .staged-scene .section-index > * {
       --i: 0;
       animation: staged-focus linear both;
       animation-timeline: --staged;
-      animation-range: contain calc(28% + var(--i) * 7%) contain calc(46% + var(--i) * 7%);
+      animation-range: contain calc(26% + var(--i) * 10%) contain calc(34% + var(--i) * 10%);
     }
     .staged-scene .section-index > *:nth-child(2) {
       --i: 1;
@@ -374,7 +377,7 @@ body {
      * and the range leaves it sharp from the start, only moving. */
     .staged-scene .staged-title {
       animation-name: staged-title-rise;
-      animation-range: contain 0% contain 26%;
+      animation-range: contain 0% contain 24%;
     }
   }
 }
