@@ -205,6 +205,17 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, transparent, black);
   mask-image: linear-gradient(to bottom, transparent, black);
 }
+/* `backdrop-filter` is the most GPU-costly primitive on the page and hits
+ * hardest on mobile Safari (this audience's device). The seam is a subtle
+ * transition polish, and below md the scenes flow rather than pin, so its job
+ * barely applies — drop the whole strip on phones. (Measured: removing seam
+ * blur was worth several fps even on throttled Chromium, which under-reports
+ * GPU cost.) */
+@media (max-width: 767px) {
+  .scene-seam::before {
+    content: none;
+  }
+}
 
 /* ── Invasão pinned scene ──────────────────────────────────────────────────
  * The tall section is the view-timeline subject; the sticky stage pins for
