@@ -56,7 +56,6 @@ const DICTIONARY = {
     shareCopied: "Ligação copiada",
     lastUpdated: "Última atualização",
     madeBy: "Feito por",
-    sectionProgress: "Secção",
     fireBehaviour: {
       resists: "Resiste ao fogo",
       resprouts: "Rebenta após o fogo",
@@ -93,7 +92,6 @@ const DICTIONARY = {
     shareCopied: "Link copied",
     lastUpdated: "Last updated",
     madeBy: "Made by",
-    sectionProgress: "Section",
     fireBehaviour: {
       resists: "Fire-resistant",
       resprouts: "Resprouts after fire",

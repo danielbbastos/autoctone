@@ -13,12 +13,10 @@ import { pick, type Locale } from "@/lib/i18n";
 export function SectionNav({
   sections,
   label,
-  progressLabel,
   locale,
 }: {
   sections: readonly { id: string; titlePt: string; titleEn?: string }[];
   label: string;
-  progressLabel: string;
   locale: Locale;
 }) {
   const [active, setActive] = useState(0);
@@ -87,11 +85,6 @@ export function SectionNav({
           );
         })}
       </ol>
-
-      <p className="mt-1 text-[0.7rem] tabular-nums text-emerald-300/60">
-        <span className="sr-only">{progressLabel} </span>
-        {active + 1}/{sections.length}
-      </p>
     </nav>
   );
 }

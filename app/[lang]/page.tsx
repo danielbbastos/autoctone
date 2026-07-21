@@ -80,7 +80,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       <SectionNav
         sections={SECTIONS}
         label={dict.sections}
-        progressLabel={dict.sectionProgress}
         locale={locale}
       />
       <BackToTop label={dict.backToTop} />
