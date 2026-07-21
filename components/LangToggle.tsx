@@ -20,7 +20,7 @@ export function LangToggle({
       <Link
         href={`/${target}`}
         hrefLang={target}
-        className="rounded-full border border-emerald-700/60 bg-emerald-950/80 px-3 py-1 text-sm text-emerald-100 backdrop-blur transition hover:bg-emerald-900"
+        className="rounded-full border border-emerald-700/60 bg-emerald-950 px-3 py-1 text-sm text-emerald-100 backdrop-blur transition hover:bg-emerald-900"
       >
         {otherLabel}
       </Link>
