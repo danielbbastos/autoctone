@@ -33,9 +33,16 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   const [heroSection, ...restSections] = SECTIONS;
 
-  /* The section right after the blacked-out invasão scene plays as a pinned
-   * cinematic: photo backdrop, centred title, then copy resolving out of blur. */
-  const STAGED_SECTION = "ciclo";
+  /* Cinematic run: two consecutive sections play as pinned scenes over ONE
+   * shared burnt-forest photo that stays put while each section's copy scrolls
+   * through it. The first opens on a black curtain that unveils the photo; the
+   * second opens straight onto it. The ids are coupled and must stay adjacent
+   * (and in this order) in SECTIONS. */
+  const STAGED_FIRST = "ciclo";
+  const STAGED_SECOND = "fogo-eucalipto";
+  // First normal section after the run: wears the emerald seam so the burnt
+  // backdrop dissolves into the canopy as it slides away.
+  const AFTER_SEQUENCE = "lucro";
 
   const sectionExtras: Partial<Record<string, ReactNode>> = {
     lucro: <OrgList orgs={PROFIT_ORGS} locale={locale} />,
@@ -80,7 +87,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       <SectionNav
         sections={SECTIONS}
         label={dict.sections}
-        progressLabel={dict.sectionProgress}
         locale={locale}
       />
       <BackToTop label={dict.backToTop} />
@@ -93,28 +99,58 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <div className="narrative-region">
           <div className="narrative-bg" aria-hidden />
           {/* +2: 1-based numbering, and `hero` was already split off the front. */}
-          {restSections.map((section, i) =>
-            section.id === "invasao" ? (
+          {restSections.map((section, i) => {
+            const index = i + 2;
+            // Rendered inside the shared-backdrop sequence, alongside its pair.
+            if (section.id === STAGED_SECOND) return null;
+            if (section.id === STAGED_FIRST) {
+              const second = restSections[i + 1];
+              return (
+                <div className="staged-sequence" key="staged-sequence">
+                  <div className="staged-sequence-bg" aria-hidden />
+                  <NarrativeSection
+                    section={section}
+                    locale={locale}
+                    index={index}
+                    heading="h2"
+                    staged
+                    firstStaged
+                  >
+                    {sectionExtras[section.id]}
+                  </NarrativeSection>
+                  <NarrativeSection
+                    section={second}
+                    locale={locale}
+                    index={index + 1}
+                    heading="h2"
+                    staged
+                  >
+                    {sectionExtras[second.id]}
+                  </NarrativeSection>
+                </div>
+              );
+            }
+            return section.id === "invasao" ? (
               <InvasaoScene
                 key={section.id}
                 section={section}
                 stat={getStat("eucalipto-ha")}
                 locale={locale}
-                index={i + 2}
+                index={index}
               />
             ) : (
               <NarrativeSection
                 key={section.id}
                 section={section}
                 locale={locale}
-                index={i + 2}
+                index={index}
                 heading="h2"
-                staged={section.id === STAGED_SECTION}
+                seamAbove={section.id === AFTER_SEQUENCE}
               >
                 {sectionExtras[section.id]}
               </NarrativeSection>
-            ),
-          )}
+            );
+          })}
         </div>
 
         <ForestRestore locale={locale} />

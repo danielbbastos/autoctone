@@ -212,6 +212,12 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, transparent, black);
   mask-image: linear-gradient(to bottom, transparent, black);
 }
+/* Emerald seam for joins that dissolve out of a dark scene into the narrative
+ * copy (e.g. the burnt-forest run into the canopy), rather than the default
+ * black. Matches .forest-restore's seam colour. */
+.scene-seam--emerald {
+  --seam-color: #022c22;
+}
 
 /* ── Invasão pinned scene ──────────────────────────────────────────────────
  * The tall section is the view-timeline subject; the sticky stage pins for
@@ -277,6 +283,39 @@ body {
   position: relative;
   isolation: isolate;
 }
+
+/* Shared burnt-forest backdrop for the cinematic run (ciclo + fogo-eucalipto).
+ * A 100vh sticky layer that pins ONCE and stays put across both staged sections:
+ * each section's copy scrolls up and off this still frame, and the next section's
+ * title rises over the very same photo. The gradient is the legibility scrim.
+ *
+ * The overlap that lets the sections lie over it is pulled from the FIRST section
+ * (margin-top on .staged-scene--first), NOT a negative margin here: keeping a real
+ * 100vh margin box means this sticky layer releases at `sequenceBottom - 100vh` —
+ * the same point the last section's own sticky stage releases — so the photo and
+ * that copy scroll away together and the following section arrives on the canopy.
+ * (Zeroing the margin box the .narrative-bg way would pin it to the very end and
+ * let the next section slide up over the still-pinned photo.) */
+.staged-sequence {
+  position: relative;
+  isolation: isolate;
+}
+.staged-sequence-bg {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  z-index: -1;
+  background:
+    linear-gradient(to bottom, rgb(2 44 34 / 0.82), rgb(2 44 34 / 0.62)),
+    url("/burnt-forest.jpg") center / cover no-repeat;
+  pointer-events: none;
+}
+/* Pull the run up over the backdrop's 100vh flow box (see above). */
+.staged-scene--first {
+  margin-top: -100vh;
+  margin-top: -100dvh;
+}
 /* Keyboard reveal: the staged blocks resolve out of blur on scroll, but the
  * source link and cross-link inside can be tabbed to before scroll has revealed
  * them. Focus forces the containing block to its resolved state so focus never
@@ -286,20 +325,12 @@ body {
   opacity: 1 !important;
   filter: none !important;
 }
-.staged-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(to bottom, rgb(2 44 34 / 0.82), rgb(2 44 34 / 0.62)),
-    url("/burnt-forest.jpg") center / cover no-repeat;
-}
-/* Black curtain over the photo — same z-index as ::before, so pseudo order
- * paints it above the image but still under the copy. Base state is
- * transparent: with reduced motion or no timeline support a black box would be
- * the wrong fallback, so the opaque end comes only from the `both` fill. */
-.staged-stage::after {
+/* Black curtain over the shared photo, on the FIRST scene only — it sits in
+ * front of the sequence backdrop (which lives behind this stage) but under the
+ * copy. Base state is transparent: with reduced motion or no timeline support a
+ * black box would be the wrong fallback, so the opaque end comes only from the
+ * `both` fill of the unveil animation below. */
+.staged-scene--first .staged-stage::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -351,7 +382,7 @@ body {
 @media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (min-height: 600px) {
   @supports (animation-timeline: view()) {
     .staged-scene {
-      height: 320vh; /* ↑ more = slower staging, longer time pinned */
+      height: 850vh; /* ↑ more = slower staging, longer time pinned */
     }
     .staged-stage {
       position: sticky;
@@ -360,8 +391,9 @@ body {
       height: 100dvh;
     }
     /* The photo arrives late on purpose: the copy resolves against black and
-     * the burnt forest is only fully uncovered four-fifths through the pin. */
-    .staged-stage::after {
+     * the burnt forest is only fully uncovered four-fifths through the first
+     * scene's pin. The second scene opens straight onto the revealed photo. */
+    .staged-scene--first .staged-stage::after {
       animation: inv-unveil linear both;
       animation-timeline: --staged;
       animation-range: contain 0% contain 80%;
@@ -371,46 +403,45 @@ body {
     .staged-scene .section-index::before {
       animation: staged-focus-ghost linear both;
       animation-timeline: --staged;
-      animation-range: contain 26% contain 34%;
+      animation-range: contain 10% contain 18%;
     }
     /* One shared window shifted per sibling by --i, set from nth-child so the
      * cascade owns the ordering and the component keeps no index bookkeeping.
-     * The 8% window is narrower than the 10% step, so each block finishes and
-     * holds before the next begins — strictly one at a time, never two blurs at
-     * once. (The i=1 slot is the title, which animates separately below, so its
-     * 10% gap is intentional dead air after the kicker.) */
+     * The 8% window is narrower than the 14% step, so each block finishes and
+     * then holds for the 6% gap (~45vh at this height) before the next begins —
+     * strictly one at a time, never two blurs at once, and the hold is the beat
+     * the reader scrolls through. --i skips the title (nth-child 2): it rises
+     * separately at 0–8%, so it takes no ladder beat and the kicker flows
+     * straight into the first paragraph with a single gap. */
     .staged-scene .section-index > * {
       --i: 0;
       animation: staged-focus linear both;
       animation-timeline: --staged;
-      animation-range: contain calc(26% + var(--i) * 10%) contain calc(34% + var(--i) * 10%);
-    }
-    .staged-scene .section-index > *:nth-child(2) {
-      --i: 1;
+      animation-range: contain calc(10% + var(--i) * 14%) contain calc(18% + var(--i) * 14%);
     }
     .staged-scene .section-index > *:nth-child(3) {
-      --i: 2;
+      --i: 1;
     }
     .staged-scene .section-index > *:nth-child(4) {
-      --i: 3;
+      --i: 2;
     }
     .staged-scene .section-index > *:nth-child(5) {
-      --i: 4;
+      --i: 3;
     }
     .staged-scene .section-index > *:nth-child(6) {
-      --i: 5;
+      --i: 4;
     }
     .staged-scene .section-index > *:nth-child(7) {
-      --i: 6;
+      --i: 5;
     }
     .staged-scene .section-index > *:nth-child(8) {
-      --i: 7;
+      --i: 6;
     }
     /* The title opts out of the blur ladder entirely: replacing both the name
      * and the range leaves it sharp from the start, only moving. */
     .staged-scene .staged-title {
       animation-name: staged-title-rise;
-      animation-range: contain 0% contain 24%;
+      animation-range: contain 0% contain 8%;
     }
   }
 }
