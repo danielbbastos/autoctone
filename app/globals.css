@@ -266,6 +266,15 @@ body {
   position: relative;
   isolation: isolate;
 }
+/* Keyboard reveal: the staged blocks resolve out of blur on scroll, but the
+ * source link and cross-link inside can be tabbed to before scroll has revealed
+ * them. Focus forces the containing block to its resolved state so focus never
+ * lands on an invisible control (WCAG 2.4.7). `!important` beats the animation's
+ * filled value; a no-op on mobile/reduced-motion where blocks are already shown. */
+.staged-scene .section-index > *:focus-within {
+  opacity: 1 !important;
+  filter: none !important;
+}
 .staged-stage::before {
   content: "";
   position: absolute;
