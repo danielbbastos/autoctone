@@ -76,7 +76,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
     <>
       <SkipLink label={dict.skipToContent} />
       <ReadingProgress />
-      <LangToggle locale={locale} label={dict.language} otherLabel={dict.otherLangName} />
+      <LangToggle locale={locale} label={dict.language} />
       <SectionNav
         sections={SECTIONS}
         label={dict.sections}
