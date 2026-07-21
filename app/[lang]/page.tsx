@@ -22,6 +22,7 @@ import { SectionNav } from "@/components/SectionNav";
 import { LangToggle } from "@/components/LangToggle";
 import { SkipLink } from "@/components/SkipLink";
 import { BackToTop } from "@/components/BackToTop";
+import { ReadingProgress } from "@/components/ReadingProgress";
 import { SourcesFooter } from "@/components/SourcesFooter";
 
 export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
@@ -74,7 +75,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   return (
     <>
       <SkipLink label={dict.skipToContent} />
-      <LangToggle locale={locale} label={dict.language} otherLabel={dict.otherLangName} />
+      <ReadingProgress endId="fontes" />
+      <LangToggle locale={locale} label={dict.language} />
       <SectionNav
         sections={SECTIONS}
         label={dict.sections}

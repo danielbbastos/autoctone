@@ -52,7 +52,11 @@ export function ForestShareChart({ locale }: { locale: Locale }) {
         ))}
       </ul>
 
-      <table className="sr-only">
+      {/* sr-only on a <div>, not the <table>: a table ignores width:1px (its
+        * sizing expands to content), so it renders full-width and overflows the
+        * viewport on narrow phones. The div clips it properly. */}
+      <div className="sr-only">
+        <table>
         <caption>{dict.plantedShareTitle}</caption>
         <thead>
           <tr>
@@ -70,7 +74,8 @@ export function ForestShareChart({ locale }: { locale: Locale }) {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       <p className="mt-5 max-w-xl text-sm leading-relaxed text-emerald-100/70">
         {dict.plantedShareCaveat}
