@@ -205,15 +205,17 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, transparent, black);
   mask-image: linear-gradient(to bottom, transparent, black);
 }
-/* `backdrop-filter` is the most GPU-costly primitive on the page and hits
- * hardest on mobile Safari (this audience's device). The seam is a subtle
- * transition polish, and below md the scenes flow rather than pin, so its job
- * barely applies — drop the whole strip on phones. (Measured: removing seam
- * blur was worth several fps even on throttled Chromium, which under-reports
- * GPU cost.) */
+/* On phones, drop only the GPU-costly `backdrop-filter` (the most expensive
+ * primitive on the page, worst on mobile Safari — this audience's device) and
+ * keep the masked black strip. The strip is what bridges the scene boundary; it
+ * softens the outgoing scene's hard bottom edge into the next scene's colour, so
+ * removing it entirely leaves a visible seam line. (Measured: the blur was worth
+ * several fps even on throttled Chromium, which under-reports GPU cost; the
+ * strip alone is near-free.) */
 @media (max-width: 767px) {
   .scene-seam::before {
-    content: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
