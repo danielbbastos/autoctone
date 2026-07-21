@@ -21,6 +21,8 @@ export function NarrativeSection({
   index,
   heading = "h2",
   staged = false,
+  firstStaged = false,
+  seamAbove = false,
   children,
 }: {
   section: Section;
@@ -29,11 +31,23 @@ export function NarrativeSection({
   index: number;
   heading?: "h1" | "h2";
   /**
-   * Cinematic variant: the section grows tall and pins, opening on the photo
-   * backdrop with the title centred, then the title rises and the rest resolves
-   * out of blur as you scroll. Staging lives in globals.css (".staged-scene").
+   * Cinematic variant: the section grows tall and pins, opening with the title
+   * centred, then the title rises and the rest resolves out of blur as you
+   * scroll. Staging lives in globals.css (".staged-scene").
    */
   staged?: boolean;
+  /**
+   * First scene of a shared-backdrop run: it owns the opening black curtain and
+   * the seam into the previous scene. Later scenes in the run open straight onto
+   * the already-revealed photo, so they skip both.
+   */
+  firstStaged?: boolean;
+  /**
+   * Soften the top edge with an emerald seam — for a normal section that follows
+   * a dark full-bleed scene (the burnt-forest run), so the backdrop dissolves
+   * into the canopy instead of cutting.
+   */
+  seamAbove?: boolean;
   children?: ReactNode;
 }) {
   const dict = getDictionary(locale);
@@ -95,7 +109,11 @@ export function NarrativeSection({
   return (
     <section
       id={section.id}
-      className={`relative ${staged ? "staged-scene scene-seam" : layout}`}
+      className={`relative ${
+        staged
+          ? `staged-scene${firstStaged ? " staged-scene--first scene-seam" : ""}`
+          : `${layout}${seamAbove ? " scene-seam scene-seam--emerald" : ""}`
+      }`}
     >
       {staged ? <div className={`staged-stage ${layout}`}>{content}</div> : content}
     </section>
