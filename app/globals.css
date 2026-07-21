@@ -351,7 +351,7 @@ body {
 @media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (min-height: 600px) {
   @supports (animation-timeline: view()) {
     .staged-scene {
-      height: 320vh; /* ↑ more = slower staging, longer time pinned */
+      height: 560vh; /* ↑ more = slower staging, longer time pinned */
     }
     .staged-stage {
       position: sticky;
@@ -371,19 +371,20 @@ body {
     .staged-scene .section-index::before {
       animation: staged-focus-ghost linear both;
       animation-timeline: --staged;
-      animation-range: contain 26% contain 34%;
+      animation-range: contain 18% contain 26%;
     }
     /* One shared window shifted per sibling by --i, set from nth-child so the
      * cascade owns the ordering and the component keeps no index bookkeeping.
-     * The 8% window is narrower than the 10% step, so each block finishes and
-     * holds before the next begins — strictly one at a time, never two blurs at
-     * once. (The i=1 slot is the title, which animates separately below, so its
-     * 10% gap is intentional dead air after the kicker.) */
+     * The 8% window is narrower than the 12% step, so each block finishes and
+     * then holds for the 4% gap before the next begins — strictly one at a time,
+     * never two blurs at once, and the hold is the beat the reader scrolls
+     * through. (The i=1 slot is the title, which animates separately below, so
+     * its 12% gap is intentional dead air after the kicker.) */
     .staged-scene .section-index > * {
       --i: 0;
       animation: staged-focus linear both;
       animation-timeline: --staged;
-      animation-range: contain calc(26% + var(--i) * 10%) contain calc(34% + var(--i) * 10%);
+      animation-range: contain calc(18% + var(--i) * 12%) contain calc(26% + var(--i) * 12%);
     }
     .staged-scene .section-index > *:nth-child(2) {
       --i: 1;
@@ -410,7 +411,7 @@ body {
      * and the range leaves it sharp from the start, only moving. */
     .staged-scene .staged-title {
       animation-name: staged-title-rise;
-      animation-range: contain 0% contain 24%;
+      animation-range: contain 0% contain 16%;
     }
   }
 }
