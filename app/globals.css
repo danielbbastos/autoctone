@@ -680,10 +680,16 @@ body {
 .forest-caption {
   position: absolute;
   bottom: 7vh;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Centre via symmetric insets + auto margins, NOT left:50%+translateX: with a
+   * shrink-to-fit width, left:50% caps the available width at half the stage, so
+   * on phones the caption wrapped into a tall blob. This lets it use the full
+   * width minus a 1.5rem margin each side (the page's default px-6). */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   z-index: 50;
-  max-width: min(34rem, calc(100vw - 2rem));
+  width: fit-content;
+  max-width: min(34rem, calc(100% - 3rem));
   padding: 0.6rem 1.4rem;
   border-radius: 999px;
   border: 1px solid rgba(110, 231, 183, 0.22);
