@@ -38,6 +38,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  /* No horizontal scroll. `clip` (not `hidden`) does NOT create a scroll
+   * container, so it leaves the named view-timeline animations and sticky pins
+   * untouched — it just trims any stray sub-pixel/off-screen overflow that would
+   * otherwise let the page pan sideways and show the body colour at the edge. */
+  overflow-x: clip;
 }
 
 /* Smooth anchor jumps for the section nav — but only if motion is welcome. */
