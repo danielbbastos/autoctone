@@ -194,22 +194,18 @@ body {
   content: "";
   position: absolute;
   inset-inline: 0;
-  top: 0;
+  /* 1px, not 0: overlaps the incoming section by a pixel so the join doesn't
+   * leave a visible gap line. */
+  top: 1px;
   height: var(--seam-height, 18vh);
-  /* +1px so the strip overlaps the incoming section rather than butting against
-   * it — otherwise a sub-pixel gap shows as a thin line at the join. */
-  transform: translateY(calc(-100% + 1px));
+  transform: translateY(-100%);
   z-index: 1;
   pointer-events: none;
   background: var(--seam-color, #000);
   -webkit-backdrop-filter: blur(18px); /* Safari still needs the prefix */
   backdrop-filter: blur(18px);
-  /* Reach full seam colour at 80%, not 100%: the bottom fifth is a SOLID band
-   * that matches the incoming section's background, so the blur dissolves into
-   * that colour instead of gradient-ing right up to the edge — which Safari's
-   * backdrop-filter compositing renders as a visible border line. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 80%);
-  mask-image: linear-gradient(to bottom, transparent, black 80%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black);
+  mask-image: linear-gradient(to bottom, transparent, black);
 }
 
 /* ── Invasão pinned scene ──────────────────────────────────────────────────
