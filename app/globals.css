@@ -227,6 +227,10 @@ body {
   position: relative;
   isolation: isolate; /* keeps the backdrop below this stage's own content only */
   background: #000; /* the invasion plays out in the dark; only embers move */
+  /* Clip the embers, which drift sideways (translateX up to 6vw): unpinned on
+   * mobile this stage is height:auto, so this only trims the stray embers, not
+   * the copy — and it stops them extending the page's width past 100vw. */
+  overflow: hidden;
 }
 
 @keyframes inv-slide-in-left {
