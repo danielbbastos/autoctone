@@ -196,27 +196,20 @@ body {
   inset-inline: 0;
   top: 0;
   height: var(--seam-height, 18vh);
-  transform: translateY(-100%);
+  /* +1px so the strip overlaps the incoming section rather than butting against
+   * it — otherwise a sub-pixel gap shows as a thin line at the join. */
+  transform: translateY(calc(-100% + 1px));
   z-index: 1;
   pointer-events: none;
   background: var(--seam-color, #000);
   -webkit-backdrop-filter: blur(18px); /* Safari still needs the prefix */
   backdrop-filter: blur(18px);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black);
-  mask-image: linear-gradient(to bottom, transparent, black);
-}
-/* On phones, drop only the GPU-costly `backdrop-filter` (the most expensive
- * primitive on the page, worst on mobile Safari — this audience's device) and
- * keep the masked black strip. The strip is what bridges the scene boundary; it
- * softens the outgoing scene's hard bottom edge into the next scene's colour, so
- * removing it entirely leaves a visible seam line. (Measured: the blur was worth
- * several fps even on throttled Chromium, which under-reports GPU cost; the
- * strip alone is near-free.) */
-@media (max-width: 767px) {
-  .scene-seam::before {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
+  /* Reach full seam colour at 80%, not 100%: the bottom fifth is a SOLID band
+   * that matches the incoming section's background, so the blur dissolves into
+   * that colour instead of gradient-ing right up to the edge — which Safari's
+   * backdrop-filter compositing renders as a visible border line. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 80%);
+  mask-image: linear-gradient(to bottom, transparent, black 80%);
 }
 
 /* ── Invasão pinned scene ──────────────────────────────────────────────────
