@@ -45,11 +45,14 @@ export function ReadingProgress({ endId }: { endId: string }) {
   }, [endId]);
 
   return (
+    // Width, not transform: a `position: fixed` element with a transform is a
+    // compositing layer iOS Safari drops during async scroll, so the bar
+    // vanished mid-scroll. A plain width keeps it painted.
     <div
       aria-hidden
       data-reading-progress
-      className="fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-cork lg:hidden"
-      style={{ transform: `scaleX(${progress})` }}
+      className="fixed left-0 top-0 z-40 h-0.5 bg-cork lg:hidden"
+      style={{ width: `${progress * 100}%` }}
     />
   );
 }
