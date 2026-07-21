@@ -19,6 +19,11 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    // Mobile: the pinned scenes hold desktop-measured content in a 100dvh stage,
+    // so they need real phone widths. iPhone SE is the smallest common (375×667)
+    // and rides the Safari engine, where the seams/filters are most sensitive.
+    { name: "mobile-safari", use: { ...devices["iPhone SE"] } },
+    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
     command: "npm run build && npm run start -- -p 3100",

@@ -210,18 +210,19 @@ body {
  * The tall section is the view-timeline subject; the sticky stage pins for
  * exactly the `contain` range (contain 0% = pinned, contain 100% = unpinning),
  * so block ranges below read as "% of the time pinned on screen" — no
- * cover-offset math like the forest scenes need. */
+ * cover-offset math like the forest scenes need.
+ *
+ * The pin itself (tall height + sticky stage) lives in the animation guard
+ * further down, not here: without motion/timeline support, or on phones where
+ * the stacked copy can't fit one screen, the scene stays in normal document
+ * flow so nothing is clipped. `position: relative` stays on the base so the
+ * absolutely-positioned embers/content still anchor to the stage. */
 .invasao-scene {
-  height: 620vh; /* ↑ more = slower stages, longer time pinned */
   view-timeline-name: --invasao;
   view-timeline-axis: block;
 }
 .invasao-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+  position: relative;
   isolation: isolate; /* keeps the backdrop below this stage's own content only */
   background: #000; /* the invasion plays out in the dark; only embers move */
 }
@@ -252,17 +253,17 @@ body {
  * title rises into place and the remaining blocks resolve out of blur.
  *
  * The content block must fit inside the pinned viewport — a sticky stage can't
- * scroll, so anything past 100vh would simply never be seen. */
+ * scroll, so anything past 100vh would simply never be seen. That constraint is
+ * exactly why the pin (tall height + sticky stage) lives in the animation guard
+ * below: with reduced motion, without timeline support, or on phones where the
+ * copy can't fit one screen, the scene flows normally over the photo backdrop
+ * (min-h-screen from the JSX layout) instead of pinning and clipping. */
 .staged-scene {
-  height: 320vh; /* ↑ more = slower staging, longer time pinned */
   view-timeline-name: --staged;
   view-timeline-axis: block;
 }
 .staged-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
+  position: relative;
   isolation: isolate;
 }
 .staged-stage::before {
@@ -324,8 +325,20 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
+/* The pin + staging apply only when we can animate AND the viewport is big
+ * enough to hold the copy: ≥md wide rules out phone portrait, ≥600px tall rules
+ * out phone landscape. Below this the scene falls back to normal flow. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (min-height: 600px) {
   @supports (animation-timeline: view()) {
+    .staged-scene {
+      height: 320vh; /* ↑ more = slower staging, longer time pinned */
+    }
+    .staged-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+    }
     /* The photo arrives late on purpose: the copy resolves against black and
      * the burnt forest is only fully uncovered four-fifths through the pin. */
     .staged-stage::after {
@@ -425,10 +438,21 @@ body {
   }
 }
 
-/* Base state (reduced motion / unsupported) is the full static layout; the
- * staging below is pure enhancement. */
-@media (prefers-reduced-motion: no-preference) {
+/* Base state (reduced motion / unsupported / phone) is the full static layout
+ * in normal flow; the pin + staging below are pure enhancement, gated on the
+ * same viewport size as the staged scene above. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (min-height: 600px) {
   @supports (animation-timeline: view()) {
+    .invasao-scene {
+      height: 620vh; /* ↑ more = slower stages, longer time pinned */
+    }
+    .invasao-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden; /* clips the sliding comparisons to the frame */
+    }
     /* Starts at contain 0% — the instant the stage finishes pinning — so the
      * first scroll after the section lands moves it. Any lead-in here reads as
      * unresponsiveness, because the section is already still on screen. */

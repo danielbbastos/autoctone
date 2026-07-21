@@ -1,6 +1,8 @@
-/* Pinned scroll scene for the "invasão" section: a 500vh section exposes the
- * --invasao view-timeline; the sticky stage pins while scroll progress stages
- * each block in (see globals.css, "Invasão pinned scene"). */
+/* Pinned scroll scene for the "invasão" section: a tall section exposes the
+ * --invasao view-timeline and the sticky stage pins while scroll progress stages
+ * each block in. The pin is a desktop/tablet enhancement — on phones (and with
+ * reduced motion) the same markup falls back to normal flow so nothing clips
+ * (see globals.css, "Invasão pinned scene"). */
 import { sectionNumber, type Section } from "@/lib/narrative";
 import type { Stat } from "@/lib/types";
 import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
