@@ -56,7 +56,7 @@ export function NarrativeSection({
         {number} · {kicker}
       </p>
       <Heading
-        className={`font-display text-4xl font-semibold leading-[1.05] tracking-tight text-emerald-50 sm:text-6xl ${
+        className={`font-display text-3xl font-semibold leading-[1.05] tracking-tight text-emerald-50 sm:text-5xl ${
           staged ? "staged-title" : ""
         }`}
       >
@@ -66,7 +66,7 @@ export function NarrativeSection({
         {section.body.map((claim, i) => (
           <p
             key={i}
-            className={`mt-6 max-w-2xl text-lg leading-relaxed text-emerald-100/90 ${
+            className={`mt-6 max-w-2xl text-base leading-relaxed text-emerald-100/90 sm:text-lg ${
               i === 0 ? "lede" : ""
             }`}
           >
