@@ -12,7 +12,7 @@ export function StatBlock({
 }: {
   stat: Stat;
   locale: Locale;
-  /** For scenes that animate the comparisons themselves (see InvasaoScene). */
+  /** For scenes that animate the comparisons themselves (see InvasionScene). */
   hideComparisons?: boolean;
 }) {
   const dict = getDictionary(locale);

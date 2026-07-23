@@ -7,7 +7,7 @@ import { PROFIT_ORGS, RESIST_ORGS } from "@/lib/organizations";
 import { ACTION_GROUPS } from "@/lib/actions";
 import { DEFAULT_LOCALE, getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { NarrativeSection } from "@/components/NarrativeSection";
-import { InvasaoScene } from "@/components/InvasaoScene";
+import { InvasionScene } from "@/components/InvasionScene";
 import { SpeciesGallery } from "@/components/SpeciesGallery";
 import { OrgList } from "@/components/OrgList";
 import { ActionList } from "@/components/ActionList";
@@ -130,8 +130,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                 </div>
               );
             }
-            return section.id === "invasao" ? (
-              <InvasaoScene
+            return section.id === "invasion" ? (
+              <InvasionScene
                 key={section.id}
                 section={section}
                 stat={getStat("eucalipto-ha")}

@@ -53,7 +53,7 @@ export const SECTIONS = [
     ],
   },
   {
-    id: "invasao",
+    id: "invasion",
     kicker: "A invasão",
     kickerEn: "The invasion",
     titlePt: "As nativas saem, o eucalipto entra",
@@ -523,7 +523,7 @@ export const STATS = [
       "of Portuguese forest belongs to private owners — mostly smallholdings of a few hectares, which makes managing the land a decision taken by thousands of families",
     sources: [
       {
-        id: "propriedadeFlorestal",
+        id: "forestProperty",
         note: "~91% propriedade privada (excluindo baldios comunitários).",
       },
     ],
@@ -539,7 +539,7 @@ export const STATS = [
       "is managed as commons by local communities — collective land, owned neither by the State nor by companies. The State manages only the remaining fraction",
     sources: [
       {
-        id: "propriedadeFlorestal",
+        id: "forestProperty",
         note: "~6% baldios comunitários; Estado/ICNF gere a fração restante (~3%).",
       },
     ],

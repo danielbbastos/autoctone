@@ -7,12 +7,12 @@ type TreeShape = "cork-oak" | "holm-oak" | "oak" | "shrub" | "riparian" | "eucal
 
 // Presentation mapping lives here so lib/species.ts stays pure content.
 const SHAPE_BY_SLUG: Record<SpeciesSlug, TreeShape> = {
-  sobreiro: "cork-oak",
-  azinheira: "holm-oak",
-  carvalhos: "oak",
-  medronheiro: "shrub",
-  "galeria-ripicola": "riparian",
-  eucalipto: "eucalyptus",
+  "cork-oak": "cork-oak",
+  "holm-oak": "holm-oak",
+  oaks: "oak",
+  "strawberry-tree": "shrub",
+  "riparian-forest": "riparian",
+  eucalyptus: "eucalyptus",
 };
 
 /* What the silhouette actually shows. The card already prints the species name,

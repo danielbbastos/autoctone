@@ -1,5 +1,5 @@
 /* Normalized source registry: claims reference these by id. Insertion order
- * defines the footnote numbers, and keys are anchor targets (#fonte-<id>) —
+ * defines the footnote numbers, and keys are anchor targets (#source-<id>) —
  * renaming a key is a breaking change; add, don't rename. */
 
 /** A canonical source. `note` is NOT here — notes are per-use, on the ref. */
@@ -73,7 +73,7 @@ export const SOURCES = {
     url: "https://www.rtp.pt/noticias/economia/exportacoes-de-cortica-caem-52-para-1148-me-em-2024-apos-anos-de-recordes_n1635228",
     year: 2024,
   },
-  propriedadeFlorestal: {
+  forestProperty: {
     short: "Florestas.pt",
     source:
       "Florestas.pt / ICNF — estrutura da propriedade florestal em Portugal (privada, fragmentada)",
@@ -119,7 +119,7 @@ export const SOURCES = {
   },
 
   // ── Species profiles (gallery) ──────────────────────────────────────
-  arvoreNacional: {
+  nationalTree: {
     short: "AR 2011",
     source:
       "Assembleia da República — Resolução que consagra o sobreiro como Árvore Nacional de Portugal",

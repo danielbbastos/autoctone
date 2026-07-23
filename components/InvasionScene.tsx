@@ -1,8 +1,8 @@
-/* Pinned scroll scene for the "invasão" section: a tall section exposes the
- * --invasao view-timeline and the sticky stage pins while scroll progress stages
+/* Pinned scroll scene for the invasion section: a tall section exposes the
+ * --invasion view-timeline and the sticky stage pins while scroll progress stages
  * each block in. The pin is a desktop/tablet enhancement — on phones (and with
  * reduced motion) the same markup falls back to normal flow so nothing clips
- * (see globals.css, "Invasão pinned scene"). */
+ * (see globals.css, "Invasion pinned scene"). */
 import { sectionNumber, type Section } from "@/lib/narrative";
 import type { Stat } from "@/lib/types";
 import { getDictionary, localize, pick, type Locale } from "@/lib/i18n";
@@ -11,7 +11,7 @@ import { collectSources } from "./NarrativeSection";
 import { SourceMarks } from "./SourceMarks";
 import { StatBlock } from "./StatBlock";
 
-export function InvasaoScene({
+export function InvasionScene({
   section,
   stat,
   locale,
@@ -32,9 +32,9 @@ export function InvasaoScene({
   return (
     <section
       id={section.id}
-      className="invasao-scene scene-seam relative"
+      className="invasion-scene scene-seam relative"
     >
-      <div className="invasao-stage flex flex-col justify-center px-6 py-16 sm:px-12">
+      <div className="invasion-stage flex flex-col justify-center px-6 py-16 sm:px-12">
         <EmberField />
         <div className="section-index relative z-10 mx-auto w-full max-w-4xl" data-index={number}>
           <p className="mb-4 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.25em] text-cork">

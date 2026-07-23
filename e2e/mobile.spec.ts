@@ -17,7 +17,7 @@
 import { expect, test } from "@playwright/test";
 
 const PINNED_SCENES = [
-  { id: "invasao", stage: ".invasao-stage" },
+  { id: "invasion", stage: ".invasion-stage" },
   { id: "ciclo", stage: ".staged-stage" },
 ] as const;
 
