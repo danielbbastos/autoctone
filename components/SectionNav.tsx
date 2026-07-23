@@ -57,7 +57,7 @@ export function SectionNav({
       aria-label={label}
       className="section-nav fixed right-4 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-end gap-3 lg:flex"
     >
-      <ol className="flex flex-col items-end gap-3">
+      <ol className="flex flex-col items-end">
         {sections.map((s, i) => {
           const title = pick(locale, s.titlePt, s.titleEn);
           const number = sectionNumber(i + 1);
@@ -68,7 +68,7 @@ export function SectionNav({
                 href={`#${s.id}`}
                 aria-label={`${number} · ${title}`}
                 aria-current={isActive ? "true" : undefined}
-                className="group flex h-3 items-center justify-end gap-2"
+                className="group flex h-6 w-8 items-center justify-end"
               >
                 <span className="section-nav-label" aria-hidden>
                   <span className="tabular-nums text-cork">{number}</span> · {title}

@@ -193,7 +193,7 @@ body {
  * one and dissolves it: `backdrop-filter` blurs whatever is behind, while the
  * mask fades both that blur and the seam colour to nothing at the top edge.
  *
- * Between two scenes of the same colour (invasão → ciclo, both black) it is
+ * Between two scenes of the same colour (invasion → ciclo, both black) it is
  * invisible by design — kept for consistency as the scenes' art changes. */
 .scene-seam::before {
   content: "";
@@ -219,7 +219,7 @@ body {
   --seam-color: #022c22;
 }
 
-/* ── Invasão pinned scene ──────────────────────────────────────────────────
+/* ── Invasion pinned scene ──────────────────────────────────────────────────
  * The tall section is the view-timeline subject; the sticky stage pins for
  * exactly the `contain` range (contain 0% = pinned, contain 100% = unpinning),
  * so block ranges below read as "% of the time pinned on screen" — no
@@ -230,11 +230,11 @@ body {
  * the stacked copy can't fit one screen, the scene stays in normal document
  * flow so nothing is clipped. `position: relative` stays on the base so the
  * absolutely-positioned embers/content still anchor to the stage. */
-.invasao-scene {
-  view-timeline-name: --invasao;
+.invasion-scene {
+  view-timeline-name: --invasion;
   view-timeline-axis: block;
 }
-.invasao-stage {
+.invasion-stage {
   position: relative;
   isolation: isolate; /* keeps the backdrop below this stage's own content only */
   background: #000; /* the invasion plays out in the dark; only embers move */
@@ -494,10 +494,10 @@ body {
  * same viewport size as the staged scene above. */
 @media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (min-height: 600px) {
   @supports (animation-timeline: view()) {
-    .invasao-scene {
+    .invasion-scene {
       height: 620vh; /* ↑ more = slower stages, longer time pinned */
     }
-    .invasao-stage {
+    .invasion-stage {
       position: sticky;
       top: 0;
       height: 100vh;
@@ -509,17 +509,17 @@ body {
      * unresponsiveness, because the section is already still on screen. */
     .inv-aside {
       animation: inv-slide-in-left linear both;
-      animation-timeline: --invasao;
+      animation-timeline: --invasion;
       animation-range: contain 0% contain 12%;
     }
     .inv-quote {
       animation: inv-rise linear both;
-      animation-timeline: --invasao;
+      animation-timeline: --invasion;
       animation-range: contain 18% contain 30%;
     }
     .inv-stat {
       animation: inv-rise linear both;
-      animation-timeline: --invasao;
+      animation-timeline: --invasion;
       animation-range: contain 36% contain 46%;
     }
     /* Stack the comparisons in one grid cell; each owns a slice of the scroll,
@@ -533,7 +533,7 @@ body {
     .inv-compare-item {
       grid-area: 1 / 1;
       animation: inv-compare-cycle linear both;
-      animation-timeline: --invasao;
+      animation-timeline: --invasion;
     }
     /* 18% slices with a 4% overlap: the outgoing item is still clearing frame
      * as the next arrives, so the slot is never empty. Widen these together
@@ -973,10 +973,10 @@ body {
       will-change: transform;
     }
 
-    /* Parallax handoff into invasão. The stage unpins exactly when the section's
+    /* Parallax handoff into invasion. The stage unpins exactly when the section's
      * bottom edge reaches the viewport bottom — which is `exit 0%` — so pushing
      * it *down* across the exit makes it climb away at roughly 0.7× page speed.
-     * Invasão's opaque black arrives at 1.0× and paints later (.narrative-region
+     * Invasion's opaque black arrives at 1.0× and paints later (.narrative-region
      * follows in DOM order), so it overtakes and covers the lagging forest.
      * Scoped to .forest-reveal: .forest-restore shares .forest-stage. */
     .forest-reveal .forest-stage {

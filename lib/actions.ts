@@ -118,7 +118,7 @@ export const ACTION_GROUPS = [
           en:
             "Portuguese forest is mostly scattered smallholdings, which makes management at scale " +
             "impossible. Commons and owner groupings restore that scale without selling the land.",
-          sources: [{ id: "propriedadeFlorestal" }],
+          sources: [{ id: "forestProperty" }],
         },
       },
     ],

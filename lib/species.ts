@@ -5,7 +5,7 @@ import type { Species } from "./types";
 
 export const SPECIES = [
   {
-    slug: "sobreiro",
+    slug: "cork-oak",
     namePt: "Sobreiro",
     nameEn: "Cork oak",
     scientific: "Quercus suber",
@@ -22,12 +22,12 @@ export const SPECIES = [
       "and the tree resprouts after fire. It has been Portugal's national tree since 2011, " +
       "and the country is the world's largest cork producer, with about half of global output.",
     sources: [
-      { id: "arvoreNacional", note: "Árvore Nacional aprovada em dezembro de 2011." },
+      { id: "nationalTree", note: "Árvore Nacional aprovada em dezembro de 2011." },
       { id: "apcor", note: "Portugal ~50% da produção mundial de cortiça." },
     ],
   },
   {
-    slug: "azinheira",
+    slug: "holm-oak",
     namePt: "Azinheira",
     nameEn: "Holm oak",
     scientific: "Quercus rotundifolia",
@@ -48,7 +48,7 @@ export const SPECIES = [
     ],
   },
   {
-    slug: "carvalhos",
+    slug: "oaks",
     namePt: "Carvalhos",
     nameEn: "Deciduous oaks",
     scientific: "Quercus robur, Q. pyrenaica, Q. faginea",
@@ -69,7 +69,7 @@ export const SPECIES = [
     ],
   },
   {
-    slug: "medronheiro",
+    slug: "strawberry-tree",
     namePt: "Medronheiro",
     nameEn: "Strawberry tree",
     scientific: "Arbutus unedo",
@@ -90,7 +90,7 @@ export const SPECIES = [
     ],
   },
   {
-    slug: "galeria-ripicola",
+    slug: "riparian-forest",
     namePt: "Galerias ripícolas",
     nameEn: "Riparian gallery",
     scientific: "Fraxinus angustifolia, Alnus glutinosa, Salix, Populus",
@@ -111,7 +111,7 @@ export const SPECIES = [
     ],
   },
   {
-    slug: "eucalipto",
+    slug: "eucalyptus",
     namePt: "Eucalipto",
     nameEn: "Blue gum eucalyptus",
     scientific: "Eucalyptus globulus",
@@ -136,7 +136,7 @@ export const SPECIES = [
 /**
  * Typed lookup by slug. The `SpeciesSlug` union is derived from the data
  * itself, so callers get autocomplete and the compiler rejects a typo like
- * `getSpecies("sobriero")`.
+ * `getSpecies("cork-aok")`.
  */
 export type SpeciesSlug = (typeof SPECIES)[number]["slug"];
 

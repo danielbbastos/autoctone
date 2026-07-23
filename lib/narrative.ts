@@ -20,6 +20,16 @@ export type Section = {
   pullQuote?: { pt: string; en?: string };
   /** Optional "read why" button linking to a deep-dive section (`to` = "#id"). */
   link?: { pt: string; en?: string; to: string };
+  /**
+   * Presentation treatment. Omitted → the default NarrativeSection shell.
+   * "invasion" swaps in the embers scene. "staged-lead"/"staged-follow" render
+   * as ONE pinned shared-backdrop run and must stay adjacent, lead immediately
+   * before follow — enforced in __tests__/content.test.ts, not by convention.
+   */
+  scene?: "invasion" | "staged-lead" | "staged-follow";
+  /** Soften the top edge with an emerald seam — a normal section that follows a
+   * dark full-bleed run, so the backdrop dissolves into the canopy. */
+  seamAbove?: boolean;
 };
 
 export const SECTIONS = [
@@ -53,7 +63,8 @@ export const SECTIONS = [
     ],
   },
   {
-    id: "invasao",
+    id: "invasion",
+    scene: "invasion",
     kicker: "A invasão",
     kickerEn: "The invasion",
     titlePt: "As nativas saem, o eucalipto entra",
@@ -87,6 +98,7 @@ export const SECTIONS = [
   },
   {
     id: "ciclo",
+    scene: "staged-lead",
     kicker: "O ciclo",
     kickerEn: "The cycle",
     titlePt: "O fogo ajuda o eucalipto a vencer",
@@ -125,6 +137,7 @@ export const SECTIONS = [
   },
   {
     id: "fogo-eucalipto",
+    scene: "staged-follow",
     kicker: "Fogo e semente",
     kickerEn: "Fire and seed",
     titlePt: "Como o eucalipto usa o fogo",
@@ -163,6 +176,7 @@ export const SECTIONS = [
   },
   {
     id: "lucro",
+    seamAbove: true,
     kicker: "Quem lucra",
     kickerEn: "Who profits",
     titlePt: "Quem lucra com o eucalipto",
@@ -523,7 +537,7 @@ export const STATS = [
       "of Portuguese forest belongs to private owners — mostly smallholdings of a few hectares, which makes managing the land a decision taken by thousands of families",
     sources: [
       {
-        id: "propriedadeFlorestal",
+        id: "forestProperty",
         note: "~91% propriedade privada (excluindo baldios comunitários).",
       },
     ],
@@ -539,7 +553,7 @@ export const STATS = [
       "is managed as commons by local communities — collective land, owned neither by the State nor by companies. The State manages only the remaining fraction",
     sources: [
       {
-        id: "propriedadeFlorestal",
+        id: "forestProperty",
         note: "~6% baldios comunitários; Estado/ICNF gere a fração restante (~3%).",
       },
     ],

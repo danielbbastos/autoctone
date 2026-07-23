@@ -6,7 +6,7 @@
 import { describe, expect, it } from "vitest";
 import { ORGANIZATIONS } from "@/lib/organizations";
 import { SPECIES } from "@/lib/species";
-import { SECTIONS, STATS } from "@/lib/narrative";
+import { SECTIONS, STATS, type Section } from "@/lib/narrative";
 import { ACTION_GROUPS } from "@/lib/actions";
 import { FOREST_SHARES, plantedShare } from "@/lib/comparison";
 import { SOURCES, SOURCE_ORDER, sourceNumber } from "@/lib/sources";
@@ -62,6 +62,31 @@ describe("dataset slugs and ids", () => {
     ["forest shares", FOREST_SHARES.map((s) => s.code)],
   ])("%s are unique (React keys / DOM anchors)", (_name, slugs) => {
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+describe("staged-run adjacency", () => {
+  /* page.tsx renders a "staged-lead" plus the NEXT section as one pinned
+   * shared-backdrop run, reading the follow as restSections[i + 1]. That only
+   * holds if every lead is immediately followed by its "staged-follow" (and no
+   * follow is orphaned). Reorder SECTIONS and this fails instead of the scene
+   * silently breaking. */
+  const sections: readonly Section[] = SECTIONS;
+
+  it("every staged-lead is immediately followed by a staged-follow", () => {
+    sections.forEach((section, i) => {
+      if (section.scene === "staged-lead") {
+        expect(sections[i + 1]?.scene, `${section.id} → next`).toBe("staged-follow");
+      }
+    });
+  });
+
+  it("every staged-follow is immediately preceded by a staged-lead", () => {
+    sections.forEach((section, i) => {
+      if (section.scene === "staged-follow") {
+        expect(sections[i - 1]?.scene, `prev → ${section.id}`).toBe("staged-lead");
+      }
+    });
   });
 });
 
