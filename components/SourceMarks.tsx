@@ -1,4 +1,4 @@
-/* Footnote links into the Sources footer (#fonte-<id>); the footer's client
+/* Footnote links into the Sources footer (#source-<id>); the footer's client
  * component handles the open/scroll/focus behaviour. */
 import type { SourceRef } from "@/lib/types";
 import { getSource, sourceNumber } from "@/lib/sources";
@@ -24,7 +24,7 @@ export function SourceMarks({
         return (
           <a
             key={`${ref.id}-${i}`}
-            href={`#fonte-${ref.id}`}
+            href={`#source-${ref.id}`}
             title={src.source}
             className="group inline-flex items-baseline gap-1 text-[0.72rem] text-emerald-300/60 no-underline transition hover:text-cork-soft"
           >

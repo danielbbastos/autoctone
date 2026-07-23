@@ -1,5 +1,5 @@
 "use client";
-/* Collapsible source list — the #fonte-<id> jump target for every SourceMarks
+/* Collapsible source list — the #source-<id> jump target for every SourceMarks
  * chip. Listens for the hash, opens, scrolls to and focuses the entry. */
 import { useEffect, useState } from "react";
 import { SOURCE_ORDER, getSource, sourceNumber } from "@/lib/sources";
@@ -20,13 +20,13 @@ export function SourcesFooter({
 
   useEffect(() => {
     const openToHash = (hash: string) => {
-      const match = hash.match(/^#fonte-(.+)$/);
+      const match = hash.match(/^#source-(.+)$/);
       if (!match) return;
       setOpen(true);
       // Wait one frame so the list is displayed (it is `hidden` while closed)
       // before we try to scroll to and focus the target row.
       requestAnimationFrame(() => {
-        const el = document.getElementById(`fonte-${match[1]}`);
+        const el = document.getElementById(`source-${match[1]}`);
         if (!el) return;
         const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
@@ -42,14 +42,14 @@ export function SourcesFooter({
 
   return (
     <section
-      id="fontes"
+      id="sources"
       className="flex min-h-screen flex-col justify-center bg-emerald-900 px-6 py-16 text-emerald-50 sm:px-12"
     >
       <div className="mx-auto w-full max-w-4xl">
         <button
           type="button"
           aria-expanded={open}
-          aria-controls="fontes-lista"
+          aria-controls="sources-list"
           onClick={() => setOpen((o) => !o)}
           className="flex w-full items-center justify-between gap-4 text-left"
         >
@@ -67,13 +67,13 @@ export function SourcesFooter({
         </button>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-emerald-200/70">{intro}</p>
 
-        <ol id="fontes-lista" hidden={!open} className="mt-6 space-y-3">
+        <ol id="sources-list" hidden={!open} className="mt-6 space-y-3">
           {SOURCE_ORDER.map((id) => {
             const src = getSource(id);
             return (
               <li
                 key={id}
-                id={`fonte-${id}`}
+                id={`source-${id}`}
                 tabIndex={-1}
                 className="scroll-mt-24 rounded-md border border-transparent p-2 text-sm leading-relaxed text-emerald-100/80 target:border-cork/50 target:bg-emerald-950/40"
               >
