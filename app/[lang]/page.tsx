@@ -2,7 +2,7 @@
  * injects the data-heavy blocks as children keyed by section id. */
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { getStat, SECTIONS } from "@/lib/narrative";
+import { getStat, SECTIONS, type Section } from "@/lib/narrative";
 import { PROFIT_ORGS, RESIST_ORGS } from "@/lib/organizations";
 import { ACTION_GROUPS } from "@/lib/actions";
 import { DEFAULT_LOCALE, getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -31,18 +31,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const locale: Locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  const [heroSection, ...restSections] = SECTIONS;
-
-  /* Cinematic run: two consecutive sections play as pinned scenes over ONE
-   * shared burnt-forest photo that stays put while each section's copy scrolls
-   * through it. The first opens on a black curtain that unveils the photo; the
-   * second opens straight onto it. The ids are coupled and must stay adjacent
-   * (and in this order) in SECTIONS. */
-  const STAGED_FIRST = "ciclo";
-  const STAGED_SECOND = "fogo-eucalipto";
-  // First normal section after the run: wears the emerald seam so the burnt
-  // backdrop dissolves into the canopy as it slides away.
-  const AFTER_SEQUENCE = "lucro";
+  const [heroSection, ...restSections]: readonly Section[] = SECTIONS;
 
   const sectionExtras: Partial<Record<string, ReactNode>> = {
     lucro: <OrgList orgs={PROFIT_ORGS} locale={locale} />,
@@ -82,7 +71,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   return (
     <>
       <SkipLink label={dict.skipToContent} />
-      <ReadingProgress endId="fontes" />
+      <ReadingProgress endId="sources" />
       <LangToggle locale={locale} label={dict.language} />
       <SectionNav
         sections={SECTIONS}
@@ -98,58 +87,68 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         {/* The narrative steps share one pinned canopy backdrop. */}
         <div className="narrative-region">
           <div className="narrative-bg" aria-hidden />
-          {/* +2: 1-based numbering, and `hero` was already split off the front. */}
+          {/* +2: 1-based numbering, and `hero` was already split off the front.
+           * Each section's `scene` (in lib/narrative.ts) picks its treatment. */}
           {restSections.map((section, i) => {
             const index = i + 2;
-            // Rendered inside the shared-backdrop sequence, alongside its pair.
-            if (section.id === STAGED_SECOND) return null;
-            if (section.id === STAGED_FIRST) {
-              const second = restSections[i + 1];
-              return (
-                <div className="staged-sequence" key="staged-sequence">
-                  <div className="staged-sequence-bg" aria-hidden />
+            switch (section.scene) {
+              // Rendered as the second half of its lead's staged run, below.
+              case "staged-follow":
+                return null;
+              // A shared-backdrop run: this lead plus the adjacent follow play as
+              // pinned scenes over one burnt-forest photo. Adjacency is enforced
+              // in content.test.ts, so the follow is safely restSections[i + 1].
+              case "staged-lead": {
+                const follow: Section = restSections[i + 1];
+                return (
+                  <div className="staged-sequence" key="staged-sequence">
+                    <div className="staged-sequence-bg" aria-hidden />
+                    <NarrativeSection
+                      section={section}
+                      locale={locale}
+                      index={index}
+                      heading="h2"
+                      staged
+                      firstStaged
+                    >
+                      {sectionExtras[section.id]}
+                    </NarrativeSection>
+                    <NarrativeSection
+                      section={follow}
+                      locale={locale}
+                      index={index + 1}
+                      heading="h2"
+                      staged
+                    >
+                      {sectionExtras[follow.id]}
+                    </NarrativeSection>
+                  </div>
+                );
+              }
+              case "invasion":
+                return (
+                  <InvasionScene
+                    key={section.id}
+                    section={section}
+                    stat={getStat("eucalipto-ha")}
+                    locale={locale}
+                    index={index}
+                  />
+                );
+              default:
+                return (
                   <NarrativeSection
+                    key={section.id}
                     section={section}
                     locale={locale}
                     index={index}
                     heading="h2"
-                    staged
-                    firstStaged
+                    seamAbove={section.seamAbove}
                   >
                     {sectionExtras[section.id]}
                   </NarrativeSection>
-                  <NarrativeSection
-                    section={second}
-                    locale={locale}
-                    index={index + 1}
-                    heading="h2"
-                    staged
-                  >
-                    {sectionExtras[second.id]}
-                  </NarrativeSection>
-                </div>
-              );
+                );
             }
-            return section.id === "invasion" ? (
-              <InvasionScene
-                key={section.id}
-                section={section}
-                stat={getStat("eucalipto-ha")}
-                locale={locale}
-                index={index}
-              />
-            ) : (
-              <NarrativeSection
-                key={section.id}
-                section={section}
-                locale={locale}
-                index={index}
-                heading="h2"
-                seamAbove={section.id === AFTER_SEQUENCE}
-              >
-                {sectionExtras[section.id]}
-              </NarrativeSection>
-            );
           })}
         </div>
 

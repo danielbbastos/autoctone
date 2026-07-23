@@ -20,6 +20,16 @@ export type Section = {
   pullQuote?: { pt: string; en?: string };
   /** Optional "read why" button linking to a deep-dive section (`to` = "#id"). */
   link?: { pt: string; en?: string; to: string };
+  /**
+   * Presentation treatment. Omitted → the default NarrativeSection shell.
+   * "invasion" swaps in the embers scene. "staged-lead"/"staged-follow" render
+   * as ONE pinned shared-backdrop run and must stay adjacent, lead immediately
+   * before follow — enforced in __tests__/content.test.ts, not by convention.
+   */
+  scene?: "invasion" | "staged-lead" | "staged-follow";
+  /** Soften the top edge with an emerald seam — a normal section that follows a
+   * dark full-bleed run, so the backdrop dissolves into the canopy. */
+  seamAbove?: boolean;
 };
 
 export const SECTIONS = [
@@ -54,6 +64,7 @@ export const SECTIONS = [
   },
   {
     id: "invasion",
+    scene: "invasion",
     kicker: "A invasão",
     kickerEn: "The invasion",
     titlePt: "As nativas saem, o eucalipto entra",
@@ -87,6 +98,7 @@ export const SECTIONS = [
   },
   {
     id: "ciclo",
+    scene: "staged-lead",
     kicker: "O ciclo",
     kickerEn: "The cycle",
     titlePt: "O fogo ajuda o eucalipto a vencer",
@@ -125,6 +137,7 @@ export const SECTIONS = [
   },
   {
     id: "fogo-eucalipto",
+    scene: "staged-follow",
     kicker: "Fogo e semente",
     kickerEn: "Fire and seed",
     titlePt: "Como o eucalipto usa o fogo",
@@ -163,6 +176,7 @@ export const SECTIONS = [
   },
   {
     id: "lucro",
+    seamAbove: true,
     kicker: "Quem lucra",
     kickerEn: "Who profits",
     titlePt: "Quem lucra com o eucalipto",
